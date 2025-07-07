@@ -1,0 +1,45 @@
+{
+  "mouse": {
+    "enabled": true,
+    "movements": 5,
+    "min_duration": 0.5,
+    "max_duration": 2.0,
+    "min_interval": 1.0,
+    "max_interval": 5.0,
+    "scrolls": 3,
+    "scroll_sensitivity": 3,
+    "hscrolls": 1,
+    "scroll_min_interval": 0.2,
+    "scroll_max_interval": 1.0
+  },
+  "keyboard": {
+    "enabled": true,
+    "actions": 3,
+    "phrases": [
+      "hello",
+      "working on a project",
+      "checking email",
+      "typing a report"
+    ],
+    "min_interval": 2.0,
+    "max_interval": 10.0,
+    "dart_enabled": false,
+    "dart_lines": 10,
+    "code_writing_enabled": true
+  },
+  "browser": {
+    "enabled": true,
+    "headless": true,
+    "min_interval": 10.0,
+    "max_interval": 30.0
+  },
+  "ui": {
+    "dark_mode": false,
+    "hotkey_control": false,
+    "notifications_enabled": false,
+    "idle_timeout_minutes": 1,
+    "auto_restart": true,
+    "minimize_on_start": true,
+    "first_run_completed": true
+  }
+}

@@ -1,0 +1,431 @@
+2025-07-07 16:27:04,649 - INFO - Starting simulation...
+2025-07-07 16:27:04,649 - INFO - Configuration reloaded.
+2025-07-07 16:27:04,917 - INFO - Starting mouse simulation...
+2025-07-07 16:27:07,586 - INFO - Performed a click.
+2025-07-07 16:27:13,906 - INFO - Simulation stopped.
+2025-07-07 16:27:17,750 - INFO - Performed a double-click.
+2025-07-07 16:27:39,778 - INFO - Performed a double-click.
+2025-07-07 16:27:44,187 - INFO - Mouse simulation cycle completed.
+2025-07-07 16:27:44,187 - INFO - Starting keyboard simulation...
+2025-07-07 16:27:55,100 - INFO - Simulated a keyboard shortcut.
+2025-07-07 16:35:18,707 - INFO - Starting simulation...
+2025-07-07 16:35:18,712 - INFO - Configuration reloaded.
+2025-07-07 16:35:18,713 - INFO - Starting mouse simulation...
+2025-07-07 16:35:18,837 - INFO - User mouse activity detected. Stopping simulation.
+2025-07-07 16:35:18,838 - INFO - Simulation stopped.
+2025-07-07 16:35:19,417 - INFO - Mouse simulation cycle completed.
+2025-07-07 16:35:19,418 - INFO - Starting keyboard simulation...
+2025-07-07 16:35:19,418 - INFO - Keyboard simulation cycle completed.
+2025-07-07 16:35:19,418 - INFO - Starting browser simulation...
+2025-07-07 16:35:24,166 - INFO - Pausing for 5.46 seconds before next cycle.
+2025-07-07 16:43:19,277 - INFO - Android Studio simulation control initialized. Press Ctrl + ` to start, Ctrl + = to stop.
+2025-07-07 16:43:19,373 - INFO - Hotkeys registered. Waiting for user input...
+2025-07-07 16:43:27,147 - INFO - Starting simulation with Ctrl + `
+2025-07-07 16:43:27,148 - INFO - Configuration reloaded.
+2025-07-07 16:43:27,148 - INFO - Starting mouse simulation...
+2025-07-07 16:43:49,918 - INFO - Mouse simulation cycle completed.
+2025-07-07 16:43:49,918 - INFO - Starting keyboard simulation...
+2025-07-07 16:44:12,123 - INFO - Keyboard simulation cycle completed.
+2025-07-07 16:44:12,124 - INFO - Starting browser simulation...
+2025-07-07 16:44:18,693 - INFO - Android Studio simulation control initialized. Press Ctrl + ` to start, Ctrl + = to stop.
+2025-07-07 16:44:18,760 - INFO - Hotkeys registered. Waiting for user input...
+2025-07-07 16:44:23,600 - ERROR - Error interacting with search elements: Message: element click intercepted: Element <a jsname="BKxS1e" class="gyPpGe" role="link" tabindex="0" jsaction="i3viod" data-ved="0ahUKEwiooamOz6qOAxWZwjgGHWRnNVQQ67oDCAU">...</a> is not clickable at point (66, 80). Other element would receive the click: <div class="dodTBe" id="sfcnt"></div>
+  (Session info: chrome=138.0.7204.97)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff73cd16f95+76917]
+	GetHandleVerifier [0x0x7ff73cd16ff0+77008]
+	(No symbol) [0x0x7ff73cac9dea]
+	(No symbol) [0x0x7ff73cb28269]
+	(No symbol) [0x0x7ff73cb25c02]
+	(No symbol) [0x0x7ff73cb22c41]
+	(No symbol) [0x0x7ff73cb21b31]
+	(No symbol) [0x0x7ff73cb13368]
+	(No symbol) [0x0x7ff73cb4846a]
+	(No symbol) [0x0x7ff73cb12c16]
+	(No symbol) [0x0x7ff73cb48680]
+	(No symbol) [0x0x7ff73cb7065c]
+	(No symbol) [0x0x7ff73cb48243]
+	(No symbol) [0x0x7ff73cb11431]
+	(No symbol) [0x0x7ff73cb121c3]
+	GetHandleVerifier [0x0x7ff73cfed2cd+3051437]
+	GetHandleVerifier [0x0x7ff73cfe7923+3028483]
+	GetHandleVerifier [0x0x7ff73d0058bd+3151261]
+	GetHandleVerifier [0x0x7ff73cd3185e+185662]
+	GetHandleVerifier [0x0x7ff73cd3971f+218111]
+	GetHandleVerifier [0x0x7ff73cd1fb14+112628]
+	GetHandleVerifier [0x0x7ff73cd1fcc9+113065]
+	GetHandleVerifier [0x0x7ff73cd06c98+10616]
+	BaseThreadInitThunk [0x0x7ffcdeaee8d7+23]
+	RtlUserThreadStart [0x0x7ffce019c34c+44]
+
+2025-07-07 16:44:25,723 - INFO - Browser simulation cycle completed.
+2025-07-07 16:44:48,196 - INFO - Pausing for 10.62 seconds before next cycle.
+2025-07-07 16:46:12,675 - INFO - Android Studio simulation control initialized. Press Ctrl + ` to start, Ctrl + = to stop.
+2025-07-07 16:46:12,732 - INFO - Hotkeys registered. Waiting for user input...
+2025-07-07 16:49:17,007 - INFO - Starting simulation...
+2025-07-07 16:49:17,019 - INFO - Configuration reloaded.
+2025-07-07 16:49:17,122 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 16:49:17,123 - INFO - Simulation stopped.
+2025-07-07 16:49:17,136 - INFO - Starting mouse simulation...
+2025-07-07 16:49:17,136 - INFO - Mouse simulation cycle completed.
+2025-07-07 16:49:17,136 - INFO - Starting keyboard simulation...
+2025-07-07 16:49:17,136 - INFO - Keyboard simulation cycle completed.
+2025-07-07 16:49:17,137 - INFO - Starting browser simulation...
+2025-07-07 16:49:20,334 - INFO - Pausing for 8.64 seconds before next cycle.
+2025-07-07 16:49:23,646 - INFO - Simulation will auto-restart after 5 minutes of user inactivity.
+2025-07-07 16:53:36,374 - INFO - Starting simulation...
+2025-07-07 16:53:36,386 - INFO - Configuration reloaded.
+2025-07-07 16:53:36,504 - INFO - Starting mouse simulation...
+2025-07-07 16:53:36,861 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 16:53:36,862 - INFO - Simulation stopped.
+2025-07-07 16:53:37,333 - INFO - Mouse simulation cycle completed.
+2025-07-07 16:53:37,333 - INFO - Starting keyboard simulation...
+2025-07-07 16:53:37,333 - INFO - Keyboard simulation cycle completed.
+2025-07-07 16:53:37,334 - INFO - Starting browser simulation...
+2025-07-07 16:53:40,553 - INFO - Pausing for 6.87 seconds before next cycle.
+2025-07-07 16:53:45,627 - INFO - Simulation will auto-restart after 5 minutes of user inactivity.
+2025-07-07 16:55:13,464 - INFO - Starting simulation...
+2025-07-07 16:55:13,468 - INFO - Configuration reloaded.
+2025-07-07 16:55:13,470 - INFO - Starting mouse simulation...
+2025-07-07 16:55:13,850 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 16:55:13,852 - INFO - Auto-restart canceled.
+2025-07-07 16:55:23,094 - INFO - Simulation stopped.
+2025-07-07 16:55:23,107 - INFO - Mouse simulation cycle completed.
+2025-07-07 16:55:23,107 - INFO - Starting keyboard simulation...
+2025-07-07 16:55:23,108 - INFO - Keyboard simulation cycle completed.
+2025-07-07 16:55:23,109 - INFO - Starting browser simulation...
+2025-07-07 16:55:26,198 - INFO - Pausing for 9.53 seconds before next cycle.
+2025-07-07 16:55:26,202 - INFO - Simulation will auto-restart after 5 minutes of user inactivity.
+2025-07-07 17:01:42,108 - INFO - Starting simulation...
+2025-07-07 17:01:42,121 - INFO - Configuration reloaded.
+2025-07-07 17:01:42,123 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 17:01:42,127 - INFO - Simulation stopped.
+2025-07-07 17:01:42,237 - INFO - Starting mouse simulation...
+2025-07-07 17:01:42,238 - INFO - Mouse simulation cycle completed.
+2025-07-07 17:01:42,238 - INFO - Starting keyboard simulation...
+2025-07-07 17:01:42,238 - INFO - Keyboard simulation cycle completed.
+2025-07-07 17:01:42,239 - INFO - Starting browser simulation...
+2025-07-07 17:01:45,438 - INFO - Pausing for 9.26 seconds before next cycle.
+2025-07-07 17:01:48,573 - INFO - Simulation will auto-restart after 5 minutes of user inactivity.
+2025-07-07 17:01:59,576 - INFO - Auto-restart canceled.
+2025-07-07 17:02:31,423 - INFO - Starting simulation...
+2025-07-07 17:02:31,427 - INFO - Configuration reloaded.
+2025-07-07 17:02:31,428 - INFO - Starting mouse simulation...
+2025-07-07 17:02:31,441 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 17:02:31,442 - INFO - Simulation stopped.
+2025-07-07 17:02:31,738 - INFO - Mouse simulation cycle completed.
+2025-07-07 17:02:31,738 - INFO - Starting keyboard simulation...
+2025-07-07 17:02:31,740 - INFO - Keyboard simulation cycle completed.
+2025-07-07 17:02:31,740 - INFO - Starting browser simulation...
+2025-07-07 17:02:33,445 - INFO - Simulation will auto-restart after 2 minutes of user inactivity.
+2025-07-07 17:02:34,841 - INFO - Pausing for 5.99 seconds before next cycle.
+2025-07-07 17:02:49,935 - INFO - Auto-restart canceled.
+2025-07-07 17:38:39,210 - INFO - Android Studio simulation control initialized.
+2025-07-07 17:38:39,211 - INFO - Hotkey control is disabled in configuration. Use UI to start/stop simulation.
+2025-07-07 17:41:10,012 - INFO - Android Studio simulation control initialized.
+2025-07-07 17:41:10,013 - INFO - Hotkey control is disabled in configuration. Use UI to start/stop simulation.
+2025-07-07 17:41:57,503 - INFO - Starting simulation...
+2025-07-07 17:41:57,515 - INFO - Configuration reloaded.
+2025-07-07 17:41:57,616 - INFO - Starting mouse simulation...
+2025-07-07 17:42:15,000 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 17:42:15,001 - INFO - Simulation stopped.
+2025-07-07 17:42:15,057 - INFO - Mouse simulation cycle completed.
+2025-07-07 17:42:15,057 - INFO - Starting keyboard simulation...
+2025-07-07 17:42:15,058 - INFO - Keyboard simulation cycle completed.
+2025-07-07 17:42:15,058 - INFO - Starting browser simulation...
+2025-07-07 17:42:17,014 - INFO - Simulation will auto-restart after 1 minutes of user inactivity.
+2025-07-07 17:42:17,015 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 17:42:17,015 - INFO - Auto-restart canceled.
+2025-07-07 17:42:17,015 - INFO - Simulation will auto-restart after 1 minutes of user inactivity.
+2025-07-07 17:42:19,286 - INFO - Pausing for 12.09 seconds before next cycle.
+2025-07-07 18:30:27,636 - INFO - Starting simulation...
+2025-07-07 18:30:27,648 - INFO - Configuration reloaded.
+2025-07-07 18:30:27,770 - INFO - Starting mouse simulation...
+2025-07-07 18:30:38,370 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:30:38,373 - INFO - Simulation stopped.
+2025-07-07 18:30:38,403 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:30:38,403 - INFO - Starting keyboard simulation...
+2025-07-07 18:30:38,404 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:30:38,405 - INFO - Starting browser simulation...
+2025-07-07 18:30:40,377 - INFO - Simulation will auto-restart after 1 minutes of user inactivity.
+2025-07-07 18:30:40,379 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:30:40,380 - INFO - Auto-restart canceled.
+2025-07-07 18:30:40,381 - INFO - Simulation will auto-restart after 1 minutes of user inactivity.
+2025-07-07 18:30:41,616 - INFO - Pausing for 12.41 seconds before next cycle.
+2025-07-07 18:31:51,173 - INFO - Auto-restarting simulation after user idle period.
+2025-07-07 18:31:51,174 - INFO - Starting simulation...
+2025-07-07 18:31:51,201 - INFO - Configuration reloaded.
+2025-07-07 18:31:51,205 - INFO - Starting mouse simulation...
+2025-07-07 18:31:51,384 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:31:51,387 - INFO - Simulation stopped.
+2025-07-07 18:31:51,728 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:31:51,728 - INFO - Starting keyboard simulation...
+2025-07-07 18:31:51,729 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:31:51,730 - INFO - Starting browser simulation...
+2025-07-07 18:31:53,389 - INFO - Simulation will auto-restart after 1 minutes of user inactivity.
+2025-07-07 18:31:53,391 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:31:53,393 - INFO - Auto-restart canceled.
+2025-07-07 18:31:53,394 - INFO - Simulation will auto-restart after 1 minutes of user inactivity.
+2025-07-07 18:31:54,821 - INFO - Pausing for 6.58 seconds before next cycle.
+2025-07-07 18:40:28,898 - ERROR - An error occurred when calling message handler
+Traceback (most recent call last):
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 412, in _dispatcher
+    return int(icon._message_handlers.get(
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        uMsg, lambda w, l: 0)(wParam, lParam) or 0)
+        ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 224, in _on_notify
+    descriptors[index - 1](self)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 328, in inner
+    callback(self)
+    ~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 453, in __call__
+    return self._action(icon, self)
+           ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 548, in wrapper0
+    return action()
+  File "F:\xcode\D4dartt\WorkSim\ui.py", line 366, in exit_application
+    sys.exit(0)
+    ~~~~~~~~^^^
+SystemExit: 0
+2025-07-07 18:42:14,243 - ERROR - An error occurred when calling message handler
+Traceback (most recent call last):
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 412, in _dispatcher
+    return int(icon._message_handlers.get(
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        uMsg, lambda w, l: 0)(wParam, lParam) or 0)
+        ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 224, in _on_notify
+    descriptors[index - 1](self)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 328, in inner
+    callback(self)
+    ~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 453, in __call__
+    return self._action(icon, self)
+           ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 548, in wrapper0
+    return action()
+  File "F:\xcode\D4dartt\WorkSim\ui.py", line 366, in exit_application
+    sys.exit(0)
+    ~~~~~~~~^^^
+SystemExit: 0
+2025-07-07 18:42:15,403 - ERROR - An error occurred when calling message handler
+Traceback (most recent call last):
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 412, in _dispatcher
+    return int(icon._message_handlers.get(
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        uMsg, lambda w, l: 0)(wParam, lParam) or 0)
+        ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 224, in _on_notify
+    descriptors[index - 1](self)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 328, in inner
+    callback(self)
+    ~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 453, in __call__
+    return self._action(icon, self)
+           ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 548, in wrapper0
+    return action()
+  File "F:\xcode\D4dartt\WorkSim\ui.py", line 366, in exit_application
+    sys.exit(0)
+    ~~~~~~~~^^^
+SystemExit: 0
+2025-07-07 18:42:27,141 - INFO - Starting simulation...
+2025-07-07 18:42:27,153 - INFO - Configuration reloaded.
+2025-07-07 18:42:27,204 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:42:27,204 - INFO - Simulation stopped.
+2025-07-07 18:42:27,268 - INFO - Starting mouse simulation...
+2025-07-07 18:42:27,268 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:42:27,269 - INFO - Starting keyboard simulation...
+2025-07-07 18:42:27,270 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:42:27,270 - INFO - Starting browser simulation...
+2025-07-07 18:42:29,207 - INFO - Anoid will auto-restart after 1 min (jitter: -10s) of user inactivity.
+2025-07-07 18:42:29,209 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:42:29,213 - INFO - Auto-restart canceled.
+2025-07-07 18:42:29,213 - INFO - Anoid will auto-restart after 1 min (jitter: -3s) of user inactivity.
+2025-07-07 18:42:31,508 - INFO - Starting simulation...
+2025-07-07 18:42:31,513 - INFO - Configuration reloaded.
+2025-07-07 18:42:31,514 - INFO - Starting mouse simulation...
+2025-07-07 18:42:49,671 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:42:49,672 - INFO - Auto-restart canceled.
+2025-07-07 18:42:49,675 - INFO - Simulation stopped.
+2025-07-07 18:42:49,679 - INFO - Pausing for 12.21 seconds before next cycle.
+2025-07-07 18:42:49,732 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:42:49,733 - INFO - Starting keyboard simulation...
+2025-07-07 18:42:49,733 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:42:49,733 - INFO - Starting browser simulation...
+2025-07-07 18:42:51,685 - INFO - Anoid will auto-restart after 1 min (jitter: 6s) of user inactivity.
+2025-07-07 18:42:51,687 - INFO - User mouse activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:42:51,689 - INFO - Auto-restart canceled.
+2025-07-07 18:42:51,690 - INFO - Anoid will auto-restart after 1 min (jitter: -1s) of user inactivity.
+2025-07-07 18:42:52,824 - INFO - Pausing for 7.54 seconds before next cycle.
+2025-07-07 18:43:50,702 - INFO - Auto-restarting simulation after user idle period.
+2025-07-07 18:43:50,703 - INFO - Starting simulation...
+2025-07-07 18:43:50,708 - INFO - Configuration reloaded.
+2025-07-07 18:43:50,708 - INFO - Starting mouse simulation...
+2025-07-07 18:43:50,736 - INFO - User keyboard activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:43:50,737 - INFO - Simulation stopped.
+2025-07-07 18:43:51,227 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:43:51,227 - INFO - Starting keyboard simulation...
+2025-07-07 18:43:51,228 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:43:51,228 - INFO - Starting browser simulation...
+2025-07-07 18:43:52,748 - INFO - Anoid will auto-restart after 1 min (jitter: -6s) of user inactivity.
+2025-07-07 18:43:54,307 - INFO - Pausing for 7.92 seconds before next cycle.
+2025-07-07 18:44:46,752 - INFO - Auto-restarting simulation after user idle period.
+2025-07-07 18:44:46,752 - INFO - Starting simulation...
+2025-07-07 18:44:46,758 - INFO - Configuration reloaded.
+2025-07-07 18:44:46,759 - INFO - Starting mouse simulation...
+2025-07-07 18:44:46,794 - INFO - User keyboard activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:44:46,794 - INFO - Simulation stopped.
+2025-07-07 18:44:47,398 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:44:47,398 - INFO - Starting keyboard simulation...
+2025-07-07 18:44:47,399 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:44:47,400 - INFO - Starting browser simulation...
+2025-07-07 18:44:48,808 - INFO - Anoid will auto-restart after 1 min (jitter: -9s) of user inactivity.
+2025-07-07 18:44:50,473 - INFO - Pausing for 9.21 seconds before next cycle.
+2025-07-07 18:45:39,820 - INFO - Auto-restarting simulation after user idle period.
+2025-07-07 18:45:39,820 - INFO - Starting simulation...
+2025-07-07 18:45:39,826 - INFO - Configuration reloaded.
+2025-07-07 18:45:39,827 - INFO - Starting mouse simulation...
+2025-07-07 18:45:39,839 - INFO - User keyboard activity detected. Stopping simulation and resetting idle timer.
+2025-07-07 18:45:39,840 - INFO - Simulation stopped.
+2025-07-07 18:45:40,393 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:45:40,393 - INFO - Starting keyboard simulation...
+2025-07-07 18:45:40,394 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:45:40,394 - INFO - Starting browser simulation...
+2025-07-07 18:45:41,844 - INFO - Anoid will auto-restart after 1 min (jitter: 6s) of user inactivity.
+2025-07-07 18:45:43,474 - INFO - Pausing for 12.50 seconds before next cycle.
+2025-07-07 18:45:51,130 - ERROR - An error occurred when calling message handler
+Traceback (most recent call last):
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 412, in _dispatcher
+    return int(icon._message_handlers.get(
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        uMsg, lambda w, l: 0)(wParam, lParam) or 0)
+        ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_win32.py", line 224, in _on_notify
+    descriptors[index - 1](self)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 328, in inner
+    callback(self)
+    ~~~~~~~~^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 453, in __call__
+    return self._action(icon, self)
+           ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\yasir\AppData\Roaming\Python\Python313\site-packages\pystray\_base.py", line 548, in wrapper0
+    return action()
+  File "F:\xcode\D4dartt\WorkSim\ui.py", line 367, in exit_application
+    sys.exit(0)
+    ~~~~~~~~^^^
+SystemExit: 0
+2025-07-07 18:46:44,828 - INFO - Starting simulation...
+2025-07-07 18:46:44,844 - INFO - Configuration reloaded.
+2025-07-07 18:46:44,950 - INFO - Starting mouse simulation...
+2025-07-07 18:47:00,893 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:47:00,894 - INFO - Simulation stopped.
+2025-07-07 18:47:01,490 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:47:01,490 - INFO - Starting keyboard simulation...
+2025-07-07 18:47:01,491 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:47:01,492 - INFO - Starting browser simulation...
+2025-07-07 18:47:02,909 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:47:04,670 - INFO - Pausing for 6.64 seconds before next cycle.
+2025-07-07 18:49:20,019 - INFO - Starting simulation...
+2025-07-07 18:49:20,031 - INFO - Configuration reloaded.
+2025-07-07 18:49:20,138 - INFO - Starting mouse simulation...
+2025-07-07 18:49:21,297 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:49:21,300 - INFO - Simulation stopped.
+2025-07-07 18:49:21,871 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:49:21,871 - INFO - Starting keyboard simulation...
+2025-07-07 18:49:21,872 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:49:21,873 - INFO - Starting browser simulation...
+2025-07-07 18:49:23,315 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:49:24,631 - ERROR - Failed to show system tray icon: [WinError 6] The handle is invalid.
+2025-07-07 18:49:25,082 - INFO - Pausing for 9.48 seconds before next cycle.
+2025-07-07 18:54:10,831 - INFO - Starting simulation...
+2025-07-07 18:54:10,842 - INFO - Configuration reloaded.
+2025-07-07 18:54:10,941 - INFO - Starting mouse simulation...
+2025-07-07 18:54:52,559 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:54:52,559 - INFO - Starting keyboard simulation...
+2025-07-07 18:54:55,298 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:54:55,299 - INFO - Simulation stopped.
+2025-07-07 18:54:55,390 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:54:55,391 - INFO - Starting browser simulation...
+2025-07-07 18:54:57,309 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:54:58,568 - INFO - Pausing for 13.34 seconds before next cycle.
+2025-07-07 18:56:54,488 - INFO - Starting simulation...
+2025-07-07 18:56:54,501 - INFO - Configuration reloaded.
+2025-07-07 18:56:54,606 - INFO - Starting mouse simulation...
+2025-07-07 18:56:56,095 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:56:56,095 - INFO - Simulation stopped.
+2025-07-07 18:56:56,459 - INFO - Mouse simulation cycle completed.
+2025-07-07 18:56:56,459 - INFO - Starting keyboard simulation...
+2025-07-07 18:56:56,459 - INFO - Keyboard simulation cycle completed.
+2025-07-07 18:56:56,460 - INFO - Starting browser simulation...
+2025-07-07 18:56:58,107 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 18:56:59,643 - INFO - Pausing for 12.01 seconds before next cycle.
+2025-07-07 19:03:26,784 - INFO - Starting simulation...
+2025-07-07 19:03:26,793 - INFO - Configuration reloaded.
+2025-07-07 19:03:26,844 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:03:26,845 - INFO - Simulation stopped.
+2025-07-07 19:03:26,864 - INFO - Starting mouse simulation...
+2025-07-07 19:03:26,864 - INFO - Mouse simulation cycle completed.
+2025-07-07 19:03:26,864 - INFO - Starting keyboard simulation...
+2025-07-07 19:03:26,864 - INFO - Keyboard simulation cycle completed.
+2025-07-07 19:03:26,864 - INFO - Starting browser simulation...
+2025-07-07 19:03:28,862 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:03:30,009 - INFO - Pausing for 5.64 seconds before next cycle.
+2025-07-07 19:04:28,203 - INFO - Starting simulation...
+2025-07-07 19:04:28,212 - INFO - Configuration reloaded.
+2025-07-07 19:04:28,282 - INFO - Starting mouse simulation...
+2025-07-07 19:04:28,838 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:04:28,841 - INFO - Simulation stopped.
+2025-07-07 19:04:29,303 - INFO - Mouse simulation cycle completed.
+2025-07-07 19:04:29,303 - INFO - Starting keyboard simulation...
+2025-07-07 19:04:29,304 - INFO - Keyboard simulation cycle completed.
+2025-07-07 19:04:29,304 - INFO - Starting browser simulation...
+2025-07-07 19:04:30,852 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:04:32,431 - INFO - Pausing for 6.21 seconds before next cycle.
+2025-07-07 19:18:31,933 - INFO - Starting simulation...
+2025-07-07 19:18:31,945 - INFO - Configuration reloaded.
+2025-07-07 19:18:32,168 - INFO - Starting mouse simulation...
+2025-07-07 19:18:39,296 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:18:39,296 - INFO - Simulation stopped.
+2025-07-07 19:18:39,317 - INFO - Mouse simulation cycle completed.
+2025-07-07 19:18:39,317 - INFO - Starting keyboard simulation...
+2025-07-07 19:18:39,318 - INFO - Keyboard simulation cycle completed.
+2025-07-07 19:18:39,318 - INFO - Starting browser simulation...
+2025-07-07 19:18:41,300 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:18:42,597 - INFO - Pausing for 8.53 seconds before next cycle.
+2025-07-07 19:19:19,473 - INFO - Starting simulation...
+2025-07-07 19:19:19,484 - INFO - Configuration reloaded.
+2025-07-07 19:19:19,557 - INFO - Starting mouse simulation...
+2025-07-07 19:19:20,293 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:19:20,293 - INFO - Simulation stopped.
+2025-07-07 19:19:20,688 - INFO - Mouse simulation cycle completed.
+2025-07-07 19:19:20,688 - INFO - Starting keyboard simulation...
+2025-07-07 19:19:20,689 - INFO - Keyboard simulation cycle completed.
+2025-07-07 19:19:20,689 - INFO - Starting browser simulation...
+2025-07-07 19:19:22,294 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:19:23,846 - INFO - Pausing for 9.68 seconds before next cycle.
+2025-07-07 19:37:01,636 - INFO - Minimizing to system tray on start as per configuration.
+2025-07-07 19:37:09,144 - INFO - Starting simulation...
+2025-07-07 19:37:09,156 - INFO - Configuration reloaded.
+2025-07-07 19:37:09,234 - INFO - Starting mouse simulation...
+2025-07-07 19:37:10,170 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:37:10,170 - INFO - Simulation stopped.
+2025-07-07 19:37:10,451 - INFO - Mouse simulation cycle completed.
+2025-07-07 19:37:10,451 - INFO - Starting keyboard simulation...
+2025-07-07 19:37:10,451 - INFO - Keyboard simulation cycle completed.
+2025-07-07 19:37:10,451 - INFO - Starting browser simulation...
+2025-07-07 19:37:12,171 - INFO - User mouse activity detected. Pausing simulation and resetting resume timer.
+2025-07-07 19:37:13,714 - INFO - Pausing for 6.95 seconds before next cycle.
+2025-07-07 19:43:08,226 - INFO - Minimizing to system tray on start as per configuration.
+2025-07-07 19:44:56,550 - INFO - Minimizing to system tray on start as per configuration.
+2025-07-07 19:45:41,070 - INFO - Minimizing to system tray on start as per configuration.
+2025-07-07 19:49:29,457 - INFO - Minimizing to system tray on start as per configuration.
+2025-07-07 19:55:15,776 - INFO - Opened URL in browser: https://github.com/yasirSub
+2025-07-07 19:55:18,078 - INFO - First run detected, opened GitHub repository in browser.
+2025-07-07 19:55:18,078 - INFO - Minimizing to system tray on start as per configuration.
+2025-07-07 19:55:39,611 - INFO - Opened URL in browser: https://github.com/yasirSub
