@@ -1,0 +1,26 @@
+Android Studio (Activity Tool) v1.0.2
+======================================
+
+Installation Complete!
+
+Thank you for installing Android Studio (Activity Tool).
+
+Next Steps:
+-----------
+- You can launch the application from the Start Menu or the desktop shortcut (if you chose to create one).
+- The application will run with administrator privileges for full functionality.
+- To configure or customize the tool, open the app and explore the settings tabs.
+- For help, support, or updates, visit:
+  https://github.com/yasirSub/AndroidStudioV1
+
+Uninstallation:
+---------------
+- To uninstall, use the "Uninstall" shortcut in the Start Menu group, or go to Windows Apps & Features.
+- You can also use the "Uninstall" button in the app's Advanced tab.
+
+Feedback:
+---------
+If you enjoy using this tool or have suggestions, please consider leaving feedback or opening an issue on GitHub.
+
+Thank you for using Android Studio (Activity Tool)!
+- Yasir Subhani
