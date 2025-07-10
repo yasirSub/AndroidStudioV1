@@ -185,7 +185,8 @@ class UIComponents:
         self.hotkey_control_var = tk.BooleanVar(value=self.app.config.get('ui', {}).get('hotkey_control', True))
         self.notifications_enabled = tk.BooleanVar(value=self.app.config.get('ui', {}).get('notifications_enabled', False))
         self.minimize_on_start_var = tk.BooleanVar(value=self.app.config.get('ui', {}).get('minimize_on_start', True))
-        
+        # Add tray_enabled_var here so it's always available
+        self.tray_enabled_var = tk.BooleanVar(value=getattr(self.app, 'tray_enabled', True))
         self.log_text = None
         self.status_label = None
         
@@ -269,9 +270,9 @@ class UIComponents:
             end_x = random.randint(int(screen_width * 0.2), int(screen_width * 0.8))
             end_y = random.randint(int(screen_height * 0.2), int(screen_height * 0.8))
             pyautogui.moveTo(end_x, end_y, duration=self.mouse_min_duration.get())
-            messagebox.showinfo("Test Complete", "Mouse movement test completed successfully!")
+            self.app.notify_info("Test Complete", "Mouse movement test completed successfully!")
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to test mouse movement: {e}")
+            self.app.notify_error("Error", f"Failed to test mouse movement: {e}")
 
     def test_pause_settings(self):
         """Test pause settings without saving"""
@@ -279,7 +280,7 @@ class UIComponents:
             self.app.root.after_cancel(self.app.simulation_controls.resume_timer)
             self.app.simulation_controls.resume_timer = None
         self.app.simulation_controls.pause_duration = self.pause_after_activity_var.get()
-        messagebox.showinfo("Test", f"Pause after activity set to {self.pause_after_activity_var.get()} seconds (not saved)")
+        self.app.notify_info("Test", f"Pause after activity set to {self.pause_after_activity_var.get()} seconds (not saved)")
 
     def apply_pause_settings(self):
         """Apply and save pause settings"""
@@ -288,7 +289,7 @@ class UIComponents:
         self.app.config['ui']['pause_after_activity'] = self.pause_after_activity_var.get()
         self.app.save_config()
         self.app.simulation_controls.pause_duration = self.pause_after_activity_var.get()
-        messagebox.showinfo("Applied", f"Pause after activity set to {self.pause_after_activity_var.get()} seconds and saved.")
+        self.app.notify_info("Applied", f"Pause after activity set to {self.pause_after_activity_var.get()} seconds and saved.")
 
     def refresh_log(self):
         """Refresh the log display"""
@@ -337,9 +338,9 @@ class UIComponents:
             try:
                 with open(file_path, 'w') as f:
                     json.dump(self.app.config, f, indent=2)
-                messagebox.showinfo("Success", f"Configuration saved to {file_path}")
+                self.app.notify_info("Success", f"Configuration saved to {file_path}")
             except Exception as e:
-                messagebox.showerror("Error", f"Failed to save configuration: {e}")
+                self.app.notify_error("Error", f"Failed to save configuration: {e}")
 
     def setup_ui(self):
         """Setup the main UI with modern design"""
@@ -367,33 +368,33 @@ class UIComponents:
         header_frame = tk.Frame(parent, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=0)
         header_frame.pack(fill='x', pady=(0, 20))
         
-        # Status section
+        # Status section with improved styling
         status_frame = tk.Frame(header_frame, bg=self.get_color('card_bg'))
-        status_frame.pack(side=tk.LEFT, padx=20, pady=20)
+        status_frame.pack(side=tk.LEFT, padx=25, pady=25)
         
         fg, bg = self.get_fg_bg()
         self.status_label = tk.Label(
             status_frame, text="🟢 Status: Ready", 
-            font=("Segoe UI", 16, "bold"),
+            font=("Segoe UI", 18, "bold"),
             fg=fg, bg=bg
         )
         self.status_label.pack(side=tk.LEFT)
         
-        # Control buttons
+        # Control buttons with improved spacing and styling
         controls_frame = tk.Frame(header_frame, bg=self.get_color('card_bg'))
-        controls_frame.pack(side=tk.RIGHT, padx=20, pady=20)
+        controls_frame.pack(side=tk.RIGHT, padx=25, pady=25)
         
-        ModernButton(controls_frame, "▶ Start", self.app.start_simulation, "success").pack(side=tk.LEFT, padx=5)
-        ModernButton(controls_frame, "⏸ Pause", lambda: self.app.simulation_controls.handle_user_activity(), "warning").pack(side=tk.LEFT, padx=5)
-        ModernButton(controls_frame, "■ Stop", self.app.stop_simulation, "danger").pack(side=tk.LEFT, padx=5)
-        ModernButton(controls_frame, "🗕 Minimize to Tray", lambda: self.app.system_tray.minimize_to_tray(), "secondary").pack(side=tk.LEFT, padx=5)
+        ModernButton(controls_frame, "▶ Start", self.app.start_simulation, "success").pack(side=tk.LEFT, padx=8)
+        ModernButton(controls_frame, "⏸ Pause", lambda: self.app.simulation_controls.handle_user_activity(), "warning").pack(side=tk.LEFT, padx=8)
+        ModernButton(controls_frame, "■ Stop", self.app.stop_simulation, "danger").pack(side=tk.LEFT, padx=8)
+        ModernButton(controls_frame, "🗕 Minimize to Tray", lambda: self.app.system_tray.minimize_to_tray(), "secondary").pack(side=tk.LEFT, padx=8)
         
-        # Theme toggle
+        # Theme toggle with better spacing
         theme_btn = ModernButton(
             controls_frame, "🌙" if not self.is_dark_mode else "☀️", 
             self.toggle_dark_mode, "secondary"
         )
-        theme_btn.pack(side=tk.LEFT, padx=(15, 0))
+        theme_btn.pack(side=tk.LEFT, padx=(20, 0))
         ModernTooltip(theme_btn, "Toggle dark/light mode")
 
     def create_notebook(self, parent):
@@ -412,10 +413,9 @@ class UIComponents:
         self.notebook = ttk.Notebook(parent, style="Modern.TNotebook")
         self.notebook.pack(fill='both', expand=True)
         
-        # Create tabs
+        # Create tabs (no browser tab)
         self.create_mouse_tab()
         self.create_keyboard_tab()
-        self.create_browser_tab()
         self.create_advanced_tab()
         self.create_log_tab()
 
@@ -424,7 +424,7 @@ class UIComponents:
         mouse_frame = tk.Frame(self.notebook, bg=self.get_color('bg'))
         self.notebook.add(mouse_frame, text="🖱️ Mouse")
         
-        # Scrollable content
+        # Always show vertical scrollbar
         canvas = tk.Canvas(mouse_frame, bg=self.get_color('bg'), highlightthickness=0)
         scrollbar = ttk.Scrollbar(mouse_frame, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas, bg=self.get_color('bg'))
@@ -437,69 +437,81 @@ class UIComponents:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
-        # Content
-        content_frame = tk.Frame(scrollable_frame, bg=self.get_color('bg'))
-        content_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        # Force scrollbar to always be visible
+        def _always_show_scrollbar(*args):
+            canvas.yview_moveto(0)
+            scrollbar.lift(canvas)
+        canvas.bind('<Enter>', _always_show_scrollbar)
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
         
-        # Title
+        # Content with improved spacing
+        content_frame = tk.Frame(scrollable_frame, bg=self.get_color('bg'))
+        content_frame.pack(fill='both', expand=True, padx=25, pady=25)
+        
+        # Title with better typography
         fg, bg = self.get_fg_bg()
         title = tk.Label(content_frame, text="Mouse Activity Settings", 
-                        font=("Segoe UI", 18, "bold"),
+                        font=("Segoe UI", 24, "bold"),
                         fg=fg, bg=bg)
-        title.pack(anchor='w', pady=(0, 20))
+        title.pack(anchor='w', pady=(0, 30))
         
-        # Enable toggle
-        ModernCheckbox(content_frame, "Enable Mouse Activity", self.mouse_enabled).pack(anchor='w', pady=5)
+        # Enable toggle with better styling
+        enable_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
+        enable_frame.pack(fill='x', pady=(0, 25), ipady=15, ipadx=20)
+        ModernCheckbox(enable_frame, "Enable Mouse Activity", self.mouse_enabled).pack(anchor='w', pady=5)
         
-        # Settings grid
+        # Settings grid with improved layout
         settings_frame = tk.Frame(content_frame, bg=self.get_color('bg'))
-        settings_frame.pack(fill='x', pady=20)
+        settings_frame.pack(fill='x', pady=25)
         
-        # Row 1
+        # Row 1 with better spacing
         row1 = tk.Frame(settings_frame, bg=self.get_color('bg'))
-        row1.pack(fill='x', pady=10)
+        row1.pack(fill='x', pady=15)
         fg, bg = self.get_fg_bg()
-        ModernSlider(row1, "Mouse Movements per Session", self.mouse_movements, from_=1, to=50, resolution=1, is_float=False, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 20))
+        ModernSlider(row1, "Mouse Movements per Session", self.mouse_movements, from_=1, to=50, resolution=1, is_float=False, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 30))
         fg, bg = self.get_fg_bg()
         ModernSlider(row1, "Scroll Sensitivity", self.mouse_scroll_sensitivity, from_=1, to=20, resolution=1, is_float=False, fg=fg, bg=bg).pack(side=tk.LEFT)
-        # Row 2
+        
+        # Row 2 with better spacing
         row2 = tk.Frame(settings_frame, bg=self.get_color('bg'))
-        row2.pack(fill='x', pady=10)
+        row2.pack(fill='x', pady=15)
         fg, bg = self.get_fg_bg()
-        ModernSlider(row2, "Min Duration (seconds)", self.mouse_min_duration, from_=0.1, to=5.0, resolution=0.1, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 20))  # type: ignore[reportArgumentType]
+        ModernSlider(row2, "Min Duration (seconds)", self.mouse_min_duration, from_=0.1, to=5.0, resolution=0.1, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 30))  # type: ignore[reportArgumentType]
         fg, bg = self.get_fg_bg()
         ModernSlider(row2, "Max Duration (seconds)", self.mouse_max_duration, from_=0.5, to=10.0, resolution=0.1, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT)  # type: ignore[reportArgumentType]
-        # Row 3
+        
+        # Row 3 with better spacing
         row3 = tk.Frame(settings_frame, bg=self.get_color('bg'))
-        row3.pack(fill='x', pady=10)
+        row3.pack(fill='x', pady=15)
         fg, bg = self.get_fg_bg()
-        ModernSlider(row3, "Min Interval (seconds)", self.mouse_min_interval, from_=0.5, to=10.0, resolution=0.1, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 20))  # type: ignore[reportArgumentType]
+        ModernSlider(row3, "Min Interval (seconds)", self.mouse_min_interval, from_=0.5, to=10.0, resolution=0.1, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 30))  # type: ignore[reportArgumentType]
         fg, bg = self.get_fg_bg()
         ModernSlider(row3, "Max Interval (seconds)", self.mouse_max_interval, from_=1.0, to=20.0, resolution=0.1, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT)  # type: ignore[reportArgumentType]
         
-        # Advanced settings
+        # Advanced settings with improved card design
         advanced_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        advanced_frame.pack(fill='x', pady=20, ipady=15, ipadx=15)
+        advanced_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
         
         fg, bg = self.get_fg_bg()
         tk.Label(advanced_frame, text="Advanced Mouse Settings", 
-                font=("Segoe UI", 12, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
         
-        # Advanced grid
+        # Advanced grid with better spacing
         adv_row1 = tk.Frame(advanced_frame, bg=self.get_color('card_bg'))
-        adv_row1.pack(fill='x', pady=5)
+        adv_row1.pack(fill='x', pady=10)
         
         fg, bg = self.get_fg_bg()
-        ModernEntry(adv_row1, "Scrolls per Session", self.mouse_scrolls, width=8, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 20))
+        ModernEntry(adv_row1, "Scrolls per Session", self.mouse_scrolls, width=10, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 25))
         fg, bg = self.get_fg_bg()
-        ModernEntry(adv_row1, "Horizontal Scrolls", self.mouse_hscrolls, width=8, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 20))
+        ModernEntry(adv_row1, "Horizontal Scrolls", self.mouse_hscrolls, width=10, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 25))
         fg, bg = self.get_fg_bg()
-        ModernEntry(adv_row1, "Scroll Min Interval", self.mouse_scroll_min_interval, width=8, fg=fg, bg=bg).pack(side=tk.LEFT)
+        ModernEntry(adv_row1, "Scroll Min Interval", self.mouse_scroll_min_interval, width=10, fg=fg, bg=bg).pack(side=tk.LEFT)
         
-        # Test button
+        # Test button with better styling
         test_btn = ModernButton(content_frame, "Test Mouse Movement", self.test_mouse_move, "primary")
-        test_btn.pack(anchor='w', pady=20)
+        test_btn.pack(anchor='w', pady=25)
         ModernTooltip(test_btn, "Test the current mouse settings")
         
         # Pack canvas and scrollbar
@@ -511,7 +523,7 @@ class UIComponents:
         keyboard_frame = tk.Frame(self.notebook, bg=self.get_color('bg'))
         self.notebook.add(keyboard_frame, text="⌨️ Keyboard")
         
-        # Scrollable content
+        # Always show vertical scrollbar
         canvas = tk.Canvas(keyboard_frame, bg=self.get_color('bg'), highlightthickness=0)
         scrollbar = ttk.Scrollbar(keyboard_frame, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas, bg=self.get_color('bg'))
@@ -524,123 +536,93 @@ class UIComponents:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
-        # Content
-        content_frame = tk.Frame(scrollable_frame, bg=self.get_color('bg'))
-        content_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        # Force scrollbar to always be visible
+        def _always_show_scrollbar(*args):
+            canvas.yview_moveto(0)
+            scrollbar.lift(canvas)
+        canvas.bind('<Enter>', _always_show_scrollbar)
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
         
-        # Title
+        # Content with improved spacing
+        content_frame = tk.Frame(scrollable_frame, bg=self.get_color('bg'))
+        content_frame.pack(fill='both', expand=True, padx=25, pady=25)
+        
+        # Title with better typography
         fg, bg = self.get_fg_bg()
         title = tk.Label(content_frame, text="Keyboard Activity Settings", 
-                        font=("Segoe UI", 18, "bold"),
+                        font=("Segoe UI", 24, "bold"),
                         fg=fg, bg=bg)
-        title.pack(anchor='w', pady=(0, 20))
+        title.pack(anchor='w', pady=(0, 30))
         
-        # Enable toggle
-        ModernCheckbox(content_frame, "Enable Keyboard Activity", self.keyboard_enabled).pack(anchor='w', pady=5)
+        # Enable toggle with better styling
+        enable_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
+        enable_frame.pack(fill='x', pady=(0, 25), ipady=15, ipadx=20)
+        ModernCheckbox(enable_frame, "Enable Keyboard Activity", self.keyboard_enabled).pack(anchor='w', pady=5)
         
-        # Settings
+        # Settings with improved layout
         settings_frame = tk.Frame(content_frame, bg=self.get_color('bg'))
-        settings_frame.pack(fill='x', pady=20)
+        settings_frame.pack(fill='x', pady=25)
         
-        # Row 1
+        # Row 1 with better spacing
         row1 = tk.Frame(settings_frame, bg=self.get_color('bg'))
-        row1.pack(fill='x', pady=10)
+        row1.pack(fill='x', pady=15)
         fg, bg = self.get_fg_bg()
-        ModernSlider(row1, "Actions per Session", self.keyboard_actions, from_=1, to=50, resolution=1, is_float=False, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 20))
+        ModernSlider(row1, "Actions per Session", self.keyboard_actions, from_=1, to=50, resolution=1, is_float=False, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 30))
         fg, bg = self.get_fg_bg()
         ModernSlider(row1, "Min Interval (seconds)", self.keyboard_min_interval, from_=1.0, to=30.0, resolution=0.5, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT)  # type: ignore[reportArgumentType]
-        # Row 2
+        
+        # Row 2 with better spacing
         row2 = tk.Frame(settings_frame, bg=self.get_color('bg'))
-        row2.pack(fill='x', pady=10)
+        row2.pack(fill='x', pady=15)
         fg, bg = self.get_fg_bg()
         ModernSlider(row2, "Max Interval (seconds)", self.keyboard_max_interval, from_=2.0, to=60.0, resolution=0.5, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT)  # type: ignore[reportArgumentType]
         
-        # Phrases entry
-        phrases_frame = tk.Frame(content_frame, bg=self.get_color('bg'))
-        phrases_frame.pack(fill='x', pady=20)
+        # Phrases entry with improved styling
+        phrases_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
+        phrases_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
         
         fg, bg = self.get_fg_bg()
         tk.Label(phrases_frame, text="Typing Phrases (comma separated)", 
-                font=("Segoe UI", 10, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 5))
+                font=("Segoe UI", 14, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
         
-        phrases_entry = tk.Text(phrases_frame, height=3, font=("Segoe UI", 10),
+        phrases_entry = tk.Text(phrases_frame, height=4, font=("Segoe UI", 11),
                                bg=self.get_color('card_bg'), fg=self.get_color('text'),
                                relief=tk.FLAT, borderwidth=1, highlightthickness=1,
                                highlightcolor=self.get_color('primary'),
                                highlightbackground=self.get_color('border'))
-        phrases_entry.pack(fill='x', pady=5)
+        phrases_entry.pack(fill='x', pady=10)
         phrases_entry.insert('1.0', self.keyboard_phrases.get())
         
-        # Advanced options
+        # Advanced options with improved card design
         advanced_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        advanced_frame.pack(fill='x', pady=20, ipady=15, ipadx=15)
+        advanced_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
         
         fg, bg = self.get_fg_bg()
         tk.Label(advanced_frame, text="Advanced Keyboard Options", 
-                font=("Segoe UI", 12, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
         
-        ModernCheckbox(advanced_frame, "Enable Dart Mode", self.dart_enabled).pack(anchor='w', pady=2)
-        ModernCheckbox(advanced_frame, "Enable Code Writing", self.code_writing_enabled).pack(anchor='w', pady=2)
+        ModernCheckbox(advanced_frame, "Enable Dart Mode", self.dart_enabled).pack(anchor='w', pady=5)
+        ModernCheckbox(advanced_frame, "Enable Code Writing", self.code_writing_enabled).pack(anchor='w', pady=5)
         
         dart_row = tk.Frame(advanced_frame, bg=self.get_color('card_bg'))
-        dart_row.pack(fill='x', pady=10)
+        dart_row.pack(fill='x', pady=15)
         
         fg, bg = self.get_fg_bg()
-        ModernEntry(dart_row, "Dart Lines", self.dart_lines, width=8, fg=fg, bg=bg).pack(side=tk.LEFT)
+        ModernEntry(dart_row, "Dart Lines", self.dart_lines, width=10, fg=fg, bg=bg).pack(side=tk.LEFT)
         
         # Pack canvas and scrollbar
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
-
-    def create_browser_tab(self):
-        """Create the browser settings tab"""
-        browser_frame = tk.Frame(self.notebook, bg=self.get_color('bg'))
-        self.notebook.add(browser_frame, text="🌐 Browser")
-        
-        content_frame = tk.Frame(browser_frame, bg=self.get_color('bg'))
-        content_frame.pack(fill='both', expand=True, padx=20, pady=20)
-        
-        # Title
-        fg, bg = self.get_fg_bg()
-        title = tk.Label(content_frame, text="Browser Activity Settings", 
-                        font=("Segoe UI", 18, "bold"),
-                        fg=fg, bg=bg)
-        title.pack(anchor='w', pady=(0, 20))
-        
-        # Enable toggle
-        ModernCheckbox(content_frame, "Enable Browser Activity", self.browser_enabled).pack(anchor='w', pady=5)
-        
-        # Settings
-        settings_frame = tk.Frame(content_frame, bg=self.get_color('bg'))
-        settings_frame.pack(fill='x', pady=20)
-        
-        # Row 1
-        row1 = tk.Frame(settings_frame, bg=self.get_color('bg'))
-        row1.pack(fill='x', pady=10)
-        fg, bg = self.get_fg_bg()
-        ModernSlider(row1, "Min Interval (seconds)", self.browser_min_interval, from_=5.0, to=60.0, resolution=1.0, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT, padx=(0, 20))  # type: ignore[reportArgumentType]
-        fg, bg = self.get_fg_bg()
-        ModernSlider(row1, "Max Interval (seconds)", self.browser_max_interval, from_=10.0, to=120.0, resolution=1.0, is_float=True, fg=fg, bg=bg).pack(side=tk.LEFT)  # type: ignore[reportArgumentType]
-        
-        # Options
-        options_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        options_frame.pack(fill='x', pady=20, ipady=15, ipadx=15)
-        
-        fg, bg = self.get_fg_bg()
-        tk.Label(options_frame, text="Browser Options", 
-                font=("Segoe UI", 12, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
-        
-        ModernCheckbox(options_frame, "Run in Headless Mode", self.browser_headless).pack(anchor='w', pady=2)
 
     def create_advanced_tab(self):
         """Create the advanced settings tab"""
         advanced_frame = tk.Frame(self.notebook, bg=self.get_color('bg'))
         self.notebook.add(advanced_frame, text="⚙️ Advanced")
         
-        # Scrollable content
+        # Always show vertical scrollbar
         canvas = tk.Canvas(advanced_frame, bg=self.get_color('bg'), highlightthickness=0)
         scrollbar = ttk.Scrollbar(advanced_frame, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas, bg=self.get_color('bg'))
@@ -653,101 +635,88 @@ class UIComponents:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
-        # Content
-        content_frame = tk.Frame(scrollable_frame, bg=self.get_color('bg'))
-        content_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        # Force scrollbar to always be visible
+        def _always_show_scrollbar(*args):
+            canvas.yview_moveto(0)
+            scrollbar.lift(canvas)
+        canvas.bind('<Enter>', _always_show_scrollbar)
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
         
-        # Title
+        # Content with improved spacing
+        content_frame = tk.Frame(scrollable_frame, bg=self.get_color('bg'))
+        content_frame.pack(fill='both', expand=True, padx=25, pady=25)
+        
+        # Title with better typography
         fg, bg = self.get_fg_bg()
         title = tk.Label(content_frame, text="Advanced Settings", 
-                        font=("Segoe UI", 18, "bold"),
+                        font=("Segoe UI", 24, "bold"),
                         fg=fg, bg=bg)
-        title.pack(anchor='w', pady=(0, 20))
+        title.pack(anchor='w', pady=(0, 30))
         
-        # General settings
+        # General settings with improved card design
         general_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        general_frame.pack(fill='x', pady=20, ipady=15, ipadx=15)
+        general_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
         
         fg, bg = self.get_fg_bg()
         tk.Label(general_frame, text="General Settings", 
-                font=("Segoe UI", 12, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
         
-        ModernCheckbox(general_frame, "Auto-Restart", self.auto_restart_var).pack(anchor='w', pady=2)
-        ModernCheckbox(general_frame, "Enable Hotkey Control", self.hotkey_control_var).pack(anchor='w', pady=2)
-        ModernCheckbox(general_frame, "Enable Notifications", self.notifications_enabled).pack(anchor='w', pady=2)
-        ModernCheckbox(general_frame, "Minimize on Start", self.minimize_on_start_var).pack(anchor='w', pady=2)
+        ModernCheckbox(general_frame, "Auto-Restart", self.auto_restart_var).pack(anchor='w', pady=5)
+        ModernCheckbox(general_frame, "Enable Hotkey Control", self.hotkey_control_var).pack(anchor='w', pady=5)
+        ModernCheckbox(general_frame, "Enable Notifications", self.notifications_enabled).pack(anchor='w', pady=5)
+        ModernCheckbox(general_frame, "Minimize on Start", self.minimize_on_start_var).pack(anchor='w', pady=5)
         
-        # Timeout settings
+        # Timeout settings with improved card design
         timeout_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        timeout_frame.pack(fill='x', pady=20, ipady=15, ipadx=15)
+        timeout_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
         
         fg, bg = self.get_fg_bg()
         tk.Label(timeout_frame, text="Timeout Settings", 
-                font=("Segoe UI", 12, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
         
         fg, bg = self.get_fg_bg()
-        ModernEntry(timeout_frame, "Idle Timeout (minutes)", self.idle_timeout_var, width=8, fg=fg, bg=bg).pack(anchor='w', pady=5)
+        ModernEntry(timeout_frame, "Idle Timeout (minutes)", self.idle_timeout_var, width=12, fg=fg, bg=bg).pack(anchor='w', pady=10)
         
-        # Pause settings
+        # Pause settings with improved card design
         pause_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        pause_frame.pack(fill='x', pady=20, ipady=15, ipadx=15)
+        pause_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
         
         fg, bg = self.get_fg_bg()
         tk.Label(pause_frame, text="Pause Settings", 
-                font=("Segoe UI", 12, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
         
         self.pause_after_activity_var = tk.IntVar(value=getattr(self.app, 'pause_after_activity', 3))
         fg, bg = self.get_fg_bg()
-        ModernSlider(pause_frame, "Pause After Activity (seconds)", self.pause_after_activity_var, from_=1, to=30, resolution=1, is_float=False, fg=fg, bg=bg).pack(anchor='w', pady=5)
+        ModernSlider(pause_frame, "Pause After Activity (seconds)", self.pause_after_activity_var, from_=1, to=30, resolution=1, is_float=False, fg=fg, bg=bg).pack(anchor='w', pady=10)
         
-        # Action buttons
+        # Action buttons with better spacing
         btn_frame = tk.Frame(pause_frame, bg=self.get_color('card_bg'))
-        btn_frame.pack(fill='x', pady=10)
+        btn_frame.pack(fill='x', pady=15)
         
-        ModernButton(btn_frame, "Test Settings", self.test_pause_settings, "warning").pack(side=tk.LEFT, padx=(0, 10))
+        ModernButton(btn_frame, "Test Settings", self.test_pause_settings, "warning").pack(side=tk.LEFT, padx=(0, 15))
         ModernButton(btn_frame, "Apply Settings", self.apply_pause_settings, "success").pack(side=tk.LEFT)
         
-        # Config management
+        # Config management with improved card design
         config_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        config_frame.pack(fill='x', pady=20, ipady=15, ipadx=15)
+        config_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
         
         fg, bg = self.get_fg_bg()
         tk.Label(config_frame, text="Configuration Management", 
-                font=("Segoe UI", 12, "bold"),
-                fg=fg, bg=bg).pack(anchor='w', pady=(0, 10))
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
         
         config_btn_frame = tk.Frame(config_frame, bg=self.get_color('card_bg'))
-        config_btn_frame.pack(fill='x', pady=10)
+        config_btn_frame.pack(fill='x', pady=15)
         
-        ModernButton(config_btn_frame, "Show Config", self.show_config, "secondary").pack(side=tk.LEFT, padx=(0, 10))
+        ModernButton(config_btn_frame, "Show Config", self.show_config, "secondary").pack(side=tk.LEFT, padx=(0, 15))
         ModernButton(config_btn_frame, "Save Config As...", self.save_config_as, "primary").pack(side=tk.LEFT)
         
-        # Advanced Tab (with all options, including Pause After Activity and Test/Apply)
-        advanced_tab = ttk.Frame(self.notebook)
-        self.notebook.add(advanced_tab, text="⚙️ Advanced")
-        advanced_card = ttk.Frame(advanced_tab, style="GlassyCard.TFrame")
-        advanced_card.pack(fill='both', expand=True, padx=12, pady=12)
-        tk.Label(advanced_card, text="Advanced & UI Settings", font=("Segoe UI", 13, "bold"), pady=6, fg="#007AFF", bg="#f7fafd").pack(anchor='w', padx=10, pady=(10,0))
-        self.tray_enabled_var = tk.BooleanVar(value=getattr(self.app, 'tray_enabled', True))
-        def on_tray_toggle():
-            if not self.tray_enabled_var.get():
-                from tkinter import messagebox
-                messagebox.showwarning(
-                    "Stealth Mode Enabled",
-                    "You are about to hide the tray icon.\n\nTo restore the tray icon, press the ~ key three times quickly.\n\nIf you close or minimize the main window, you will need to use this hotkey to bring the tray icon back."
-                )
-            self.app.tray_enabled = self.tray_enabled_var.get()
-            if hasattr(self.app, 'system_tray'):
-                if self.tray_enabled_var.get():
-                    self.app.system_tray.tray_enabled = True
-                    self.app.system_tray.setup_system_tray()
-                else:
-                    self.app.system_tray.tray_enabled = False
-                    self.app.system_tray.hide_tray_icon()
-        ttk.Checkbutton(advanced_card, text="Show Tray Icon (stealth mode)", variable=self.tray_enabled_var, command=on_tray_toggle).pack(anchor='w', padx=20, pady=2)
+        # Uninstall section
+        # (Removed: Uninstall button and logic now handled in logic/uninstall.py or elsewhere)
 
         # Simplified tray hotkey logic: ~ once hides, ~ twice quickly restores
         import keyboard
@@ -775,6 +744,59 @@ class UIComponents:
                 self._tilde_press_times = []
         keyboard.on_press_key('`', tilde_press_handler, suppress=False)
         
+        # Reset to Defaults section
+        reset_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
+        reset_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
+        fg, bg = self.get_fg_bg()
+        tk.Label(reset_frame, text="Reset to Defaults", 
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
+        def reset_to_defaults():
+            import tkinter.messagebox as messagebox
+            success, error = self.app.config_manager.reset_to_defaults()
+            if success:
+                messagebox.showinfo("Reset", "Configuration reset to defaults. Please restart the app.")
+            else:
+                messagebox.showerror("Error", f"Failed to reset: {error}")
+        ModernButton(reset_frame, "Reset to Defaults", reset_to_defaults, "danger").pack(anchor='w', pady=10)
+
+        # Help/About section
+        about_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
+        about_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
+        fg, bg = self.get_fg_bg()
+        tk.Label(about_frame, text="About & Support", 
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
+        tk.Label(about_frame, text="Android Studio v1.0\nAuthor: Yasir Subhani\nSupport: https://github.com/yasirSub/AndroidStudioV1\nGitHub: https://github.com/yasirSub/AndroidStudioV1", 
+                font=("Segoe UI", 12),
+                fg=fg, bg=bg, justify='left').pack(anchor='w', pady=(0, 10))
+        
+        # Resource usage section
+        resource_frame = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
+        resource_frame.pack(fill='x', pady=25, ipady=20, ipadx=20)
+        fg, bg = self.get_fg_bg()
+        tk.Label(resource_frame, text="Resource Usage", 
+                font=("Segoe UI", 16, "bold"),
+                fg=fg, bg=bg).pack(anchor='w', pady=(0, 15))
+        resource_label = tk.Label(resource_frame, text="Loading...", font=("Segoe UI", 12), fg=fg, bg=bg, justify='left')
+        resource_label.pack(anchor='w', pady=(0, 10))
+        def update_resource_label():
+            import importlib.util, os
+            logic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logic/resources.py'))
+            spec = importlib.util.spec_from_file_location('resources', logic_path)
+            if spec is None or spec.loader is None:
+                resource_label.config(text="Resource info unavailable.")
+                return
+            resources = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(resources)
+            usage = resources.get_resource_usage()
+            text = f"CPU: {usage['cpu_percent']:.1f}%\nRAM: {usage['ram_mb']:.1f} MB"
+            if usage['gpu_percent'] is not None:
+                text += f"\nGPU: {usage['gpu_percent']:.1f}%"
+            resource_label.config(text=text)
+            resource_label.after(2000, update_resource_label)
+        update_resource_label()
+
         # Pack canvas and scrollbar
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
@@ -784,65 +806,87 @@ class UIComponents:
         log_frame = tk.Frame(self.notebook, bg=self.get_color('bg'))
         self.notebook.add(log_frame, text="📝 Log")
         
-        content_frame = tk.Frame(log_frame, bg=self.get_color('bg'))
-        content_frame.pack(fill='both', expand=True, padx=20, pady=20)
+        # Always show vertical scrollbar
+        canvas = tk.Canvas(log_frame, bg=self.get_color('bg'), highlightthickness=0)
+        scrollbar = ttk.Scrollbar(log_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg=self.get_color('bg'))
         
-        # Header
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Force scrollbar to always be visible
+        def _always_show_scrollbar(*args):
+            canvas.yview_moveto(0)
+            scrollbar.lift(canvas)
+        canvas.bind('<Enter>', _always_show_scrollbar)
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
+        
+        # Content with improved spacing
+        content_frame = tk.Frame(scrollable_frame, bg=self.get_color('bg'))
+        content_frame.pack(fill='both', expand=True, padx=25, pady=25)
+        
+        # Header with improved styling
         header_frame = tk.Frame(content_frame, bg=self.get_color('bg'))
-        header_frame.pack(fill='x', pady=(0, 10))
+        header_frame.pack(fill='x', pady=(0, 20))
         
         fg, bg = self.get_fg_bg()
         tk.Label(header_frame, text="Activity Log", 
-                font=("Segoe UI", 18, "bold"),
+                font=("Segoe UI", 24, "bold"),
                 fg=fg, bg=bg).pack(side=tk.LEFT)
         
-        # Log buttons
-        ModernButton(header_frame, "Refresh", self.refresh_log, "primary").pack(side=tk.RIGHT, padx=(10, 0))
+        # Log buttons with better spacing
+        ModernButton(header_frame, "Refresh", self.refresh_log, "primary").pack(side=tk.RIGHT, padx=(15, 0))
         ModernButton(header_frame, "Clear", self.clear_log, "danger").pack(side=tk.RIGHT)
         
-        # Log text area
+        # Log text area with improved styling
         log_container = tk.Frame(content_frame, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=1)
-        log_container.pack(fill='both', expand=True, pady=10)
+        log_container.pack(fill='both', expand=True, pady=15)
         
         fg, bg = self.get_fg_bg()
         self.log_text = tk.Text(
-            log_container, height=15, state='normal', wrap='word',
+            log_container, height=20, state='normal', wrap='word',
             bg=bg, fg=fg,
             insertbackground=self.get_color('primary'),
-            font=("Consolas", 10), relief=tk.FLAT, borderwidth=0
+            font=("Consolas", 11), relief=tk.FLAT, borderwidth=0
         )
         
         log_scrollbar = ttk.Scrollbar(log_container, command=self.log_text.yview)
         self.log_text['yscrollcommand'] = log_scrollbar.set
         
-        self.log_text.pack(side=tk.LEFT, fill='both', expand=True, padx=10, pady=10)
-        log_scrollbar.pack(side=tk.RIGHT, fill='y', pady=10)
+        self.log_text.pack(side=tk.LEFT, fill='both', expand=True, padx=15, pady=15)
+        log_scrollbar.pack(side=tk.RIGHT, fill='y', pady=15)
         
         self.app.update_log_display()
 
     def create_footer(self, parent):
         """Create the footer section"""
         footer_frame = tk.Frame(parent, bg=self.get_color('card_bg'), relief=tk.FLAT, bd=0)
-        footer_frame.pack(fill='x', pady=(20, 0))
+        footer_frame.pack(fill='x', pady=(25, 0))
         
-        # Footer content
+        # Footer content with improved styling
         footer_content = tk.Frame(footer_frame, bg=self.get_color('card_bg'))
-        footer_content.pack(padx=20, pady=15)
+        footer_content.pack(padx=25, pady=20)
         
-        # Version and status info
+        # Version and status info with better typography
         fg, bg = self.get_fg_bg()
         version_label = tk.Label(
             footer_content, text="Android Studio v1.0", 
-            font=("Segoe UI", 9),
+            font=("Segoe UI", 11, "bold"),
             fg=fg, bg=bg
         )
         version_label.pack(side=tk.LEFT)
         
-        # Quick stats
+        # Quick stats with better typography
         fg, bg = self.get_fg_bg()
         stats_label = tk.Label(
             footer_content, text="Ready", 
-            font=("Segoe UI", 9),
+            font=("Segoe UI", 11),
             fg=fg, bg=bg
         )
         stats_label.pack(side=tk.RIGHT)

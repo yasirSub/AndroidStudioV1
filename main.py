@@ -4,13 +4,10 @@ import time
 import random
 import json
 import sys
+import os
+from logic.config_manager import ConfigManager
 import logging
 from datetime import datetime
-import selenium  # type: ignore
-from selenium import webdriver  # type: ignore
-from selenium.webdriver.chrome.options import Options  # type: ignore
-from selenium.webdriver.common.by import By  # type: ignore
-from selenium.webdriver.common.keys import Keys  # type: ignore
 import keyboard  # type: ignore
 
 # Setup logging
@@ -81,55 +78,8 @@ def simulate_keyboard(config):
     except Exception as e:
         logger.error(f"Error in keyboard simulation: {e}")
 
-# Simulate browser activity with varied interactions
-def simulate_browser(config):
-    try:
-        logger.info("Starting browser simulation...")
-        chrome_options = Options()
-        if config['browser']['headless']:
-            chrome_options.add_argument("--headless")
-        # Rotate user-agent to avoid detection
-        chrome_options.add_argument(f"user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{random.randint(90, 120)}.0.{random.randint(0, 9999)}.{random.randint(0, 999)} Safari/537.36")
-        # Additional arguments to mimic real browser
-        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        chrome_options.add_experimental_option('useAutomationExtension', False)
-        driver = webdriver.Chrome(options=chrome_options)
-        # List of URLs and search terms for varied activity
-        activities = [
-            {"url": "https://www.google.com", "action": "search", "terms": ["latest news", "weather today", "python tutorial", "tech trends"]},
-            {"url": "https://www.wikipedia.org", "action": "browse", "terms": ["History", "Technology", "Science"]},
-            {"url": "https://www.youtube.com", "action": "browse", "terms": ["funny videos", "how to code", "music"]}
-        ]
-        activity = random.choice(activities)
-        driver.get(activity["url"])
-        time.sleep(random.uniform(2, 4))
-        if activity["action"] == "search":
-            try:
-                search_box = driver.find_element(By.NAME, "q")
-                search_box.send_keys(random.choice(activity["terms"]))
-                search_box.send_keys(Keys.RETURN)
-                time.sleep(random.uniform(3, 6))
-                # Simulate clicking on a result
-                links = driver.find_elements(By.TAG_NAME, "a")
-                if links:
-                    random.choice(links[:10]).click()
-                    time.sleep(random.uniform(2, 5))
-            except Exception as e:
-                logger.error(f"Error interacting with search elements: {e}")
-        elif activity["action"] == "browse":
-            try:
-                search_box = driver.find_element(By.ID, "searchInput") if "wikipedia" in activity["url"].lower() else driver.find_element(By.ID, "search")
-                search_box.send_keys(random.choice(activity["terms"]))
-                search_box.send_keys(Keys.RETURN)
-                time.sleep(random.uniform(3, 7))
-            except Exception as e:
-                logger.error(f"Error interacting with browse elements: {e}")
-        driver.quit()
-        logger.info("Browser simulation cycle completed.")
-        time.sleep(random.uniform(config['browser']['min_interval'], config['browser']['max_interval']))
-    except Exception as e:
-        logger.error(f"Error in browser simulation: {e}")
+# Remove simulate_browser and all browser simulation logic
+# Remove browser simulation from run_simulation
 
 def run_simulation(config, last_config_load):
     try:
@@ -143,8 +93,8 @@ def run_simulation(config, last_config_load):
             simulate_mouse(config)
         if config['keyboard']['enabled']:
             simulate_keyboard(config)
-        if config['browser']['enabled']:
-            simulate_browser(config)
+        #if config['browser']['enabled']:
+        #    simulate_browser(config)
         # Random pause between cycles to avoid predictable patterns
         pause = random.uniform(5, 15)
         logger.info(f"Pausing for {pause:.2f} seconds before next cycle.")
@@ -183,14 +133,24 @@ def main():
         else:
             logger.info("Simulation is not running.")
     
-    # Register hotkeys only if enabled in configuration
+    # Register only ALT+` for hide/show tray
     hotkey_control_enabled = config.get('ui', {}).get('hotkey_control', True)
     if hotkey_control_enabled:
-        keyboard.add_hotkey('ctrl+`', start_simulation)
-        keyboard.add_hotkey('ctrl+=', stop_simulation)
-        logger.info("Hotkeys registered (Ctrl + ` to start, Ctrl + = to stop). Waiting for user input...")
+        # ALT+`: Hide and show tray (toggle)
+        tray_hidden = False
+        def toggle_tray():
+            nonlocal tray_hidden
+            tray_hidden = not tray_hidden
+            if tray_hidden:
+                logger.info("Hiding to tray with ALT+`")
+                # Implement tray hide logic if running with UI
+            else:
+                logger.info("Showing from tray with ALT+`")
+                # Implement tray show logic if running with UI
+        keyboard.add_hotkey('alt+`', toggle_tray)
+        logger.info("Hotkey registered: ALT+` (hide/show tray)")
     else:
-        logger.info("Hotkey control is disabled in configuration. Use UI to start/stop simulation.")
+        logger.info("Hotkey control is disabled in configuration. Use UI to control tray.")
     
     # Keep the script running to listen for hotkeys or until user exits
     keyboard.wait('esc')  # This will keep the script running until 'esc' is pressed to exit completely

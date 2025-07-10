@@ -1,11 +1,6 @@
 import time
 import random
 import pyautogui
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 import logging
 
 class Simulation:
@@ -133,138 +128,9 @@ class Simulation:
                             time.sleep(random.uniform(0.2, 1.0))
                         time.sleep(random.uniform(self.config['keyboard']['min_interval'], self.config['keyboard']['max_interval']))
                     self.logger.info("Keyboard simulation cycle completed.")
-                if self.config['browser']['enabled']:
-                    self.logger.info("Starting browser simulation...")
-                    chrome_options = Options()
-                    if self.config['browser']['headless']:
-                        chrome_options.add_argument("--headless")
-                    
-                    # Rotate user-agents with detailed versioning for realism
-                    browser_version = f"{random.randint(90, 120)}.0.{random.randint(4000, 5000)}.{random.randint(100, 200)}"
-                    os_platforms = [
-                        "Windows NT 10.0; Win64; x64",
-                        "Windows NT 6.1; Win64; x64",
-                        "Macintosh; Intel Mac OS X 10_15_7",
-                        "Macintosh; Intel Mac OS X 11_2_3"
-                    ]
-                    os_platform = random.choice(os_platforms)
-                    user_agent = f"Mozilla/5.0 ({os_platform}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{browser_version} Safari/537.36"
-                    chrome_options.add_argument(f"user-agent={user_agent}")
-                    self.logger.info(f"Using user-agent: {user_agent}")
-                    
-                    # Advanced anti-detection settings
-                    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-                    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-                    chrome_options.add_experimental_option('useAutomationExtension', False)
-                    chrome_options.add_argument("--disable-extensions")
-                    chrome_options.add_argument("--disable-gpu")
-                    chrome_options.add_argument("--no-sandbox")
-                    
-                    # Randomize window size for non-headless mode to mimic different devices
-                    if not self.config['browser']['headless']:
-                        width = random.randint(800, 1920)
-                        height = random.randint(600, 1080)
-                        chrome_options.add_argument(f"--window-size={width},{height}")
-                        self.logger.info(f"Setting browser window size to {width}x{height}")
-                    
-                    # Additional browser fingerprinting evasion
-                    chrome_options.add_argument("--disable-webgl")
-                    chrome_options.add_argument("--disable-canvas-aa")
-                    chrome_options.add_argument("--disable-2d-canvas-clip-aa")
-                    
-                    driver = webdriver.Chrome(options=chrome_options)
-                    
-                    # Execute JavaScript to spoof navigator properties
-                    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-                    
-                    # List of activities with varied behaviors
-                    activities = [
-                        {"url": "https://www.google.com", "action": "search", "terms": ["latest news", "weather today", "python tutorial", "tech trends", "best movies 2023", "local events"], "scroll": True, "clicks": 2},
-                        {"url": "https://www.wikipedia.org", "action": "browse", "terms": ["History", "Technology", "Science", "World War II", "Artificial Intelligence"], "scroll": True, "clicks": 1},
-                        {"url": "https://www.youtube.com", "action": "browse", "terms": ["funny videos", "how to code", "music playlist", "cooking recipes", "travel vlogs"], "scroll": True, "clicks": 3},
-                        {"url": "https://www.reddit.com", "action": "browse", "terms": ["funny", "technology", "askreddit", "memes"], "scroll": True, "clicks": 2},
-                        {"url": "https://www.nytimes.com", "action": "read", "terms": [], "scroll": True, "clicks": 1}
-                    ]
-                    activity = random.choice(activities)
-                    self.logger.info(f"Navigating to {activity['url']} with action: {activity['action']}")
-                    driver.get(activity["url"])
-                    time.sleep(random.uniform(2, 5))
-                    
-                    # Perform action based on activity type
-                    if activity["action"] == "search" and activity["terms"]:
-                        search_box = driver.find_element(By.NAME, "q")
-                        search_term = random.choice(activity["terms"])
-                        # Simulate typing with random pauses
-                        for char in search_term:
-                            search_box.send_keys(char)
-                            time.sleep(random.uniform(0.05, 0.2))
-                        search_box.send_keys(Keys.RETURN)
-                        time.sleep(random.uniform(3, 6))
-                        # Simulate clicking on results
-                        links = driver.find_elements(By.TAG_NAME, "a")
-                        valid_links = [link for link in links if link.is_displayed() and link.get_attribute("href")]
-                        for _ in range(min(activity["clicks"], len(valid_links))):
-                            if valid_links:
-                                link_to_click = random.choice(valid_links[:10])
-                                ActionChains(driver).move_to_element(link_to_click).click().perform()
-                                time.sleep(random.uniform(2, 5))
-                                driver.back()
-                                time.sleep(random.uniform(1, 3))
-                                valid_links = driver.find_elements(By.TAG_NAME, "a")
-                                valid_links = [link for link in valid_links if link.is_displayed() and link.get_attribute("href")]
-                    elif activity["action"] == "browse" and activity["terms"]:
-                        search_id = "searchInput" if "wikipedia" in activity["url"].lower() else "search"
-                        try:
-                            search_box = driver.find_element(By.ID, search_id)
-                            search_term = random.choice(activity["terms"])
-                            for char in search_term:
-                                search_box.send_keys(char)
-                                time.sleep(random.uniform(0.05, 0.2))
-                            search_box.send_keys(Keys.RETURN)
-                            time.sleep(random.uniform(3, 7))
-                            # Simulate clicking on internal links
-                            links = driver.find_elements(By.TAG_NAME, "a")
-                            valid_links = [link for link in links if link.is_displayed() and link.get_attribute("href") and activity["url"] in link.get_attribute("href")]
-                            for _ in range(min(activity["clicks"], len(valid_links))):
-                                if valid_links:
-                                    link_to_click = random.choice(valid_links[:5])
-                                    ActionChains(driver).move_to_element(link_to_click).click().perform()
-                                    time.sleep(random.uniform(2, 5))
-                                    driver.back()
-                                    time.sleep(random.uniform(1, 3))
-                                    links = driver.find_elements(By.TAG_NAME, "a")
-                                    valid_links = [link for link in links if link.is_displayed() and link.get_attribute("href") and activity["url"] in link.get_attribute("href")]
-                        except Exception as e:
-                            self.logger.error(f"Error in browser browse action: {e}")
-                    elif activity["action"] == "read":
-                        # Simulate reading by scrolling through the page
-                        if activity["scroll"]:
-                            total_height = driver.execute_script("return document.body.scrollHeight")
-                            scroll_distance = random.randint(200, 500)
-                            current_pos = 0
-                            for _ in range(random.randint(3, 8)):
-                                current_pos += scroll_distance
-                                if current_pos > total_height:
-                                    break
-                                driver.execute_script(f"window.scrollTo(0, {current_pos});")
-                                time.sleep(random.uniform(1.5, 3.5))  # Mimic reading time
-                            self.logger.info("Simulated reading by scrolling through page.")
-                        # Click on a few articles if available
-                        links = driver.find_elements(By.TAG_NAME, "a")
-                        valid_links = [link for link in links if link.is_displayed() and link.get_attribute("href") and "article" in link.get_attribute("href").lower()]
-                        for _ in range(min(activity["clicks"], len(valid_links))):
-                            if valid_links:
-                                link_to_click = random.choice(valid_links[:5])
-                                ActionChains(driver).move_to_element(link_to_click).click().perform()
-                                time.sleep(random.uniform(3, 7))
-                                driver.back()
-                                time.sleep(random.uniform(1, 3))
-                                links = driver.find_elements(By.TAG_NAME, "a")
-                                valid_links = [link for link in links if link.is_displayed() and link.get_attribute("href") and "article" in link.get_attribute("href").lower()]
-                    
-                    driver.quit()
-                    self.logger.info("Browser simulation cycle completed.")
-                    time.sleep(random.uniform(self.config['browser']['min_interval'], self.config['browser']['max_interval']))
+                #if self.config['browser']['enabled']:
+                #    # Browser simulation code is now disabled
+                #    pass
                 pause = random.uniform(5, 15)
                 self.logger.info(f"Pausing for {pause:.2f} seconds before next cycle.")
                 time.sleep(pause)

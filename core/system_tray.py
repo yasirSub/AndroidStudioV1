@@ -82,6 +82,22 @@ class SystemTray:
         except Exception as e:
             self.logger.error(f"Failed to update tray status: {e}")
 
+    def update_tray_resource_tooltip(self):
+        import importlib.util
+        import os
+        logic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logic/resources.py'))
+        spec = importlib.util.spec_from_file_location('resources', logic_path)
+        if spec is None or spec.loader is None:
+            return
+        resources = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(resources)
+        usage = resources.get_resource_usage()
+        tooltip = f"CPU: {usage['cpu_percent']:.1f}%\nRAM: {usage['ram_mb']:.1f} MB"
+        if usage['gpu_percent'] is not None:
+            tooltip += f"\nGPU: {usage['gpu_percent']:.1f}%"
+        if hasattr(self, 'icon') and self.icon:
+            self.icon.title = tooltip
+
     def setup_system_tray(self):
         if not self.tray_enabled:
             return
@@ -98,6 +114,7 @@ class SystemTray:
                 self.icon = pystray.Icon("AndroidStudio", image, "Android Studio - Stopped", menu)
                 self.tray_thread = threading.Thread(target=self.icon.run, daemon=True)
                 self.tray_thread.start()
+                self._schedule_resource_tooltip_update()
             except Exception as e:
                 self.icon = None
                 self.logger.warning(f"Failed to initialize system tray: {e}")
@@ -105,13 +122,23 @@ class SystemTray:
             self.icon = None
             self.logger.warning("pystray or PIL not installed. System tray icon will be disabled.")
 
+    def _schedule_resource_tooltip_update(self):
+        try:
+            self.update_tray_resource_tooltip()
+        except Exception:
+            pass
+        if hasattr(self, 'app') and hasattr(self.app, 'root'):
+            self.app.root.after(2000, self._schedule_resource_tooltip_update)
+
     def minimize_to_tray(self):
         if self.icon:
             try:
                 self.app.root.after(200, self.app.root.withdraw)
             except Exception as e:
                 self.logger.error(f"Failed to minimize to tray: {e}")
-                messagebox.showerror("Error", f"Failed to minimize to tray: {e}")
+                if self.app.config.get('ui', {}).get('notifications_enabled', False):
+                    from tkinter import messagebox
+                    messagebox.showerror("Error", f"Failed to minimize to tray: {e}")
                 self.app.show_window()
 
     def _tray_show_window(self, icon=None, item=None):

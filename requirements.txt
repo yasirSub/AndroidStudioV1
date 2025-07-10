@@ -4,3 +4,5 @@ Pillow
 pyautogui
 pynput
 selenium
+psutil
+GPUtil

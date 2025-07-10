@@ -85,15 +85,12 @@ class AndroidStudioUI:
         """Set the window icon if available"""
         try:
             # Try ICO file first
-            icon_path = os.path.join(project_root, "Android_Studio_icon_(2023).ico")
+            icon_path = os.path.join(project_root, "Android_Studio_icon.ico")
             if os.path.exists(icon_path):
                 self.root.iconbitmap(icon_path)
             else:
-                # Fallback to SVG
-                svg_path = os.path.join(project_root, "Android_Studio_icon_(2023).svg")
-                if os.path.exists(svg_path):
-                    # Note: Tkinter doesn't directly support SVG, but some systems might handle it
-                    pass
+                # Fallback to SVG (not supported by Tkinter, so just pass)
+                pass
         except Exception:
             # Silently fail if icon setting fails
             pass
@@ -392,16 +389,22 @@ class AndroidStudioUI:
         return merged
 
     def notify_info(self, title, message):
-        """Show info notification"""
-        messagebox.showinfo(title, message)
+        """Show info notification if enabled"""
+        if self.config.get('ui', {}).get('notifications_enabled', False):
+            from tkinter import messagebox
+            messagebox.showinfo(title, message)
 
     def notify_warning(self, title, message):
-        """Show warning notification"""
-        messagebox.showwarning(title, message)
+        """Show warning notification if enabled"""
+        if self.config.get('ui', {}).get('notifications_enabled', False):
+            from tkinter import messagebox
+            messagebox.showwarning(title, message)
 
     def notify_error(self, title, message):
-        """Show error notification"""
-        messagebox.showerror(title, message)
+        """Show error notification if enabled"""
+        if self.config.get('ui', {}).get('notifications_enabled', False):
+            from tkinter import messagebox
+            messagebox.showerror(title, message)
 
     def open_url(self, url):
         """Open URL in default browser"""

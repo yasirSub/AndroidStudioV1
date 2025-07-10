@@ -41,6 +41,7 @@
     "hotkey_control": false,
     "notifications_enabled": false,
     "pause_after_activity": 3,
-    "first_run_completed": true
+    "first_run_completed": true,
+    "auto_start_simulation": true
   }
 }

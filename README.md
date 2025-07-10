@@ -40,6 +40,8 @@ Anoid is a highly stealthy, user-configurable background activity tool for Windo
 4. All changes are saved to `config/anoid.json`.
 5. In the Keyboard tab, you can enable the "Type from text file" feature, select a file, set a delay, and start typing the file's contents automatically.
 
+- ALT+`: Hide and show from tray
+
 ## Configuration
 
 All settings are stored in `config/anoid.json`. Example:

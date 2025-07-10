@@ -5,7 +5,7 @@ a = Analysis(
     ['run_anoid.py'],
     pathex=[],
     binaries=[],
-    datas=[('Android_Studio_icon_(2023).svg', '.'), ('config/anoid.json', 'config')],
+    datas=[('config/anoid.json', 'config')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    # icon='Android_Studio_icon_(2023).svg',
+    icon='Android_Studio_icon.ico',
 )
