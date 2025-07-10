@@ -11,6 +11,8 @@ except ImportError:
     Image = None
     ImageDraw = None
 
+from logic.resources import get_resource_usage
+
 class SystemTray:
     def __init__(self, app):
         self.app = app
@@ -83,15 +85,7 @@ class SystemTray:
             self.logger.error(f"Failed to update tray status: {e}")
 
     def update_tray_resource_tooltip(self):
-        import importlib.util
-        import os
-        logic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logic/resources.py'))
-        spec = importlib.util.spec_from_file_location('resources', logic_path)
-        if spec is None or spec.loader is None:
-            return
-        resources = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(resources)
-        usage = resources.get_resource_usage()
+        usage = get_resource_usage()
         tooltip = f"CPU: {usage['cpu_percent']:.1f}%\nRAM: {usage['ram_mb']:.1f} MB"
         if usage['gpu_percent'] is not None:
             tooltip += f"\nGPU: {usage['gpu_percent']:.1f}%"

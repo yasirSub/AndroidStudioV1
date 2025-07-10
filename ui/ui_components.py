@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import os
 from typing import Optional, Callable, Any
+from logic.resources import get_resource_usage
 
 class ModernTooltip:
     """Modern tooltip with better styling and positioning"""
@@ -437,9 +438,22 @@ class UIComponents:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
+        # --- PATCH: Preserve scroll position ---
+        self.mouse_canvas = canvas
+        self.mouse_scrollbar = scrollbar
+        self.mouse_scrollable_frame = scrollable_frame
+        self.mouse_scroll_pos = getattr(self, 'mouse_scroll_pos', 0)
+        canvas.yview_moveto(self.mouse_scroll_pos)
+        
+        def save_scroll_pos(*args):
+            self.mouse_scroll_pos = canvas.yview()[0]
+        canvas.bind('<Leave>', save_scroll_pos)
+        scrollbar.bind('<ButtonRelease-1>', save_scroll_pos)
+        # --- END PATCH ---
+        
         # Force scrollbar to always be visible
         def _always_show_scrollbar(*args):
-            canvas.yview_moveto(0)
+            canvas.yview_moveto(self.mouse_scroll_pos)
             scrollbar.lift(canvas)
         canvas.bind('<Enter>', _always_show_scrollbar)
         scrollbar.pack(side="right", fill="y")
@@ -536,9 +550,22 @@ class UIComponents:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
+        # --- PATCH: Preserve scroll position ---
+        self.keyboard_canvas = canvas
+        self.keyboard_scrollbar = scrollbar
+        self.keyboard_scrollable_frame = scrollable_frame
+        self.keyboard_scroll_pos = getattr(self, 'keyboard_scroll_pos', 0)
+        canvas.yview_moveto(self.keyboard_scroll_pos)
+        
+        def save_scroll_pos(*args):
+            self.keyboard_scroll_pos = canvas.yview()[0]
+        canvas.bind('<Leave>', save_scroll_pos)
+        scrollbar.bind('<ButtonRelease-1>', save_scroll_pos)
+        # --- END PATCH ---
+        
         # Force scrollbar to always be visible
         def _always_show_scrollbar(*args):
-            canvas.yview_moveto(0)
+            canvas.yview_moveto(self.keyboard_scroll_pos)
             scrollbar.lift(canvas)
         canvas.bind('<Enter>', _always_show_scrollbar)
         scrollbar.pack(side="right", fill="y")
@@ -635,9 +662,22 @@ class UIComponents:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
+        # --- PATCH: Preserve scroll position ---
+        self.advanced_canvas = canvas
+        self.advanced_scrollbar = scrollbar
+        self.advanced_scrollable_frame = scrollable_frame
+        self.advanced_scroll_pos = getattr(self, 'advanced_scroll_pos', 0)
+        canvas.yview_moveto(self.advanced_scroll_pos)
+        
+        def save_scroll_pos(*args):
+            self.advanced_scroll_pos = canvas.yview()[0]
+        canvas.bind('<Leave>', save_scroll_pos)
+        scrollbar.bind('<ButtonRelease-1>', save_scroll_pos)
+        # --- END PATCH ---
+        
         # Force scrollbar to always be visible
         def _always_show_scrollbar(*args):
-            canvas.yview_moveto(0)
+            canvas.yview_moveto(self.advanced_scroll_pos)
             scrollbar.lift(canvas)
         canvas.bind('<Enter>', _always_show_scrollbar)
         scrollbar.pack(side="right", fill="y")
@@ -781,15 +821,7 @@ class UIComponents:
         resource_label = tk.Label(resource_frame, text="Loading...", font=("Segoe UI", 12), fg=fg, bg=bg, justify='left')
         resource_label.pack(anchor='w', pady=(0, 10))
         def update_resource_label():
-            import importlib.util, os
-            logic_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../logic/resources.py'))
-            spec = importlib.util.spec_from_file_location('resources', logic_path)
-            if spec is None or spec.loader is None:
-                resource_label.config(text="Resource info unavailable.")
-                return
-            resources = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(resources)
-            usage = resources.get_resource_usage()
+            usage = get_resource_usage()
             text = f"CPU: {usage['cpu_percent']:.1f}%\nRAM: {usage['ram_mb']:.1f} MB"
             if usage['gpu_percent'] is not None:
                 text += f"\nGPU: {usage['gpu_percent']:.1f}%"
@@ -819,9 +851,22 @@ class UIComponents:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
+        # --- PATCH: Preserve scroll position ---
+        self.log_canvas = canvas
+        self.log_scrollbar = scrollbar
+        self.log_scrollable_frame = scrollable_frame
+        self.log_scroll_pos = getattr(self, 'log_scroll_pos', 0)
+        canvas.yview_moveto(self.log_scroll_pos)
+        
+        def save_scroll_pos(*args):
+            self.log_scroll_pos = canvas.yview()[0]
+        canvas.bind('<Leave>', save_scroll_pos)
+        scrollbar.bind('<ButtonRelease-1>', save_scroll_pos)
+        # --- END PATCH ---
+        
         # Force scrollbar to always be visible
         def _always_show_scrollbar(*args):
-            canvas.yview_moveto(0)
+            canvas.yview_moveto(self.log_scroll_pos)
             scrollbar.lift(canvas)
         canvas.bind('<Enter>', _always_show_scrollbar)
         scrollbar.pack(side="right", fill="y")

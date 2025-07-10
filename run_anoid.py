@@ -1,5 +1,7 @@
 import sys
 import os
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="pkg_resources")
 
 # Add the project root directory to sys.path to ensure imports work correctly
 project_root = os.path.abspath(os.path.dirname(__file__))
@@ -15,6 +17,7 @@ from logic.config_manager import ConfigManager
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.title("Android Studio")
     app = AndroidStudioUI(root)
     # Minimize to tray on start only if explicitly enabled
     if app.config.get('ui', {}).get('minimize_on_start', False):
