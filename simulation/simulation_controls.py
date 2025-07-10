@@ -13,26 +13,28 @@ class SimulationControls:
         self.user_activity_listener = None
         self.user_stopped_simulation = False
         self.resume_timer = None
+        self.paused = False  # <-- Add paused flag
         self.logger = logging.getLogger("anoid")
 
     def start_simulation(self):
         if not self.simulation_running:
             try:
                 self.simulation_running = True
+                self.paused = False  # Not paused when starting
                 self.app.ui_components.status_label.config(text="Status: Simulation Running")
+                self.app.system_tray.update_status("running")
                 self.logger.info("Starting simulation...")
                 self.user_stopped_simulation = False
-                # Start user activity listener
                 self.start_user_activity_listener()
-                # Run the simulation in a separate thread to keep UI responsive
                 self.simulation_thread = threading.Thread(target=self.run_simulation, daemon=True)
                 self.simulation_thread.start()
                 self.app.notify_info("Success", "Simulation started.")
-                # Auto-minimize to tray after starting
                 self.app.root.after(200, self.app.system_tray.minimize_to_tray)
             except Exception as e:
                 self.simulation_running = False
+                self.paused = False
                 self.app.ui_components.status_label.config(text="Status: Simulation Stopped")
+                self.app.system_tray.update_status("stopped")
                 self.logger.error(f"Failed to start simulation: {e}")
                 self.app.notify_error("Error", f"Failed to start simulation: {e}")
         else:
@@ -41,16 +43,15 @@ class SimulationControls:
     def stop_simulation(self, schedule_restart=True):
         if self.simulation_running:
             self.simulation_running = False
+            self.paused = False
             self.app.ui_components.status_label.config(text="Status: Simulation Stopped")
+            self.app.system_tray.update_status("stopped")
             self.logger.info("Simulation stopped.")
             self.user_stopped_simulation = not schedule_restart
-            # Stop user activity listener
             self.stop_user_activity_listener()
-            # Wait for simulation thread to finish
             if self.simulation_thread and self.simulation_thread.is_alive():
                 self.simulation_thread.join(timeout=2)
             self.app.notify_info("Success", "Simulation stopped.")
-            # Only schedule idle-based auto-restart if enabled and not user-stopped
             if schedule_restart and self.app.auto_restart_enabled and not self.user_stopped_simulation:
                 self.app.schedule_idle_check()
         else:
@@ -88,25 +89,33 @@ class SimulationControls:
             self.user_activity_listener = None
 
     def handle_user_activity(self):
-        # Stop simulation if running
-        if self.simulation_running:
-            self.stop_simulation(schedule_restart=False)
+        # Pause simulation if running
+        if self.simulation_running and not self.paused:
+            self.paused = True
+            self.app.system_tray.update_status("paused")
+            self.app.ui_components.status_label.config(text="Status: Paused (User Activity)")
+            self.logger.info("User activity detected. Pausing simulation for 3 seconds.")
         # Cancel any existing resume timer
         if self.resume_timer:
             self.app.root.after_cancel(self.resume_timer)
             self.resume_timer = None
-        # Start a new 44-second timer to resume simulation
-        self.resume_timer = self.app.root.after(44000, self.resume_simulation)
+        # Start a new 3-second timer to resume simulation
+        self.resume_timer = self.app.root.after(3000, self.resume_simulation)
 
     def resume_simulation(self):
         self.resume_timer = None
-        if not self.simulation_running and not self.user_stopped_simulation:
-            self.logger.info("No user activity for 44 seconds. Resuming simulation.")
-            self.start_simulation()
+        if self.simulation_running and self.paused:
+            self.paused = False
+            self.app.system_tray.update_status("running")
+            self.app.ui_components.status_label.config(text="Status: Simulation Running")
+            self.logger.info("No user activity for 3 seconds. Resuming simulation.")
 
     def run_simulation(self):
         last_config_load = 0
         while self.simulation_running:
+            if self.paused:
+                time.sleep(0.1)
+                continue
             try:
                 # Defensive: ensure config has all required keys
                 if not self.app.config or 'mouse' not in self.app.config or 'keyboard' not in self.app.config or 'browser' not in self.app.config:
@@ -128,6 +137,8 @@ class SimulationControls:
                     for _ in range(self.app.config['mouse']['movements']):
                         if not self.simulation_running:
                             break
+                        while self.paused and self.simulation_running:
+                            time.sleep(0.1)
                         start_x, start_y = pyautogui.position()
                         end_x = random.randint(int(screen_width * 0.2), int(screen_width * 0.8))
                         end_y = random.randint(int(screen_height * 0.2), int(screen_height * 0.8))
@@ -138,6 +149,8 @@ class SimulationControls:
                         for t in range(steps + 1):
                             if not self.simulation_running:
                                 break
+                            while self.paused and self.simulation_running:
+                                time.sleep(0.1)
                             t_norm = t / steps
                             x = (1 - t_norm)**2 * start_x + 2 * (1 - t_norm) * t_norm * control_x + t_norm**2 * end_x
                             y = (1 - t_norm)**2 * start_y + 2 * (1 - t_norm) * t_norm * control_y + t_norm**2 * end_y
@@ -145,6 +158,8 @@ class SimulationControls:
                         for _ in range(random.randint(0, 5)):
                             if not self.simulation_running:
                                 break
+                            while self.paused and self.simulation_running:
+                                time.sleep(0.1)
                             x_small = end_x + random.randint(-30, 30)
                             y_small = end_y + random.randint(-30, 30)
                             pyautogui.moveTo(x_small, y_small, duration=random.uniform(0.1, 0.4))
@@ -153,6 +168,8 @@ class SimulationControls:
                         for _ in range(self.app.config['mouse'].get('scrolls', 3)):
                             if not self.simulation_running:
                                 break
+                            while self.paused and self.simulation_running:
+                                time.sleep(0.1)
                             scroll_amount = random.choice([-1, 1]) * self.app.config['mouse'].get('scroll_sensitivity', 3)
                             pyautogui.scroll(scroll_amount)
                             time.sleep(random.uniform(self.app.config['mouse'].get('scroll_min_interval', 0.2), self.app.config['mouse'].get('scroll_max_interval', 1.0)))
@@ -160,6 +177,8 @@ class SimulationControls:
                         for _ in range(self.app.config['mouse'].get('hscrolls', 1)):
                             if not self.simulation_running:
                                 break
+                            while self.paused and self.simulation_running:
+                                time.sleep(0.1)
                             hscroll_amount = random.choice([-1, 1]) * self.app.config['mouse'].get('scroll_sensitivity', 3)
                             pyautogui.hscroll(hscroll_amount)
                             time.sleep(random.uniform(self.app.config['mouse'].get('scroll_min_interval', 0.2), self.app.config['mouse'].get('scroll_max_interval', 1.0)))
@@ -174,6 +193,8 @@ class SimulationControls:
                     for _ in range(self.app.config['keyboard']['actions']):
                         if not self.simulation_running:
                             break
+                        while self.paused and self.simulation_running:
+                            time.sleep(0.1)
                         if self.app.ui_components.code_writing_enabled.get():
                             # Write a marker and some code
                             pyautogui.write("--------------------------------\n")
@@ -188,6 +209,8 @@ class SimulationControls:
                         for _ in range(int(random.uniform(self.app.config['keyboard']['min_interval'], self.app.config['keyboard']['max_interval']) * 10)):
                             if not self.simulation_running:
                                 break
+                            while self.paused and self.simulation_running:
+                                time.sleep(0.1)
                             time.sleep(0.1)
                     self.logger.info("Keyboard simulation cycle completed.")
                 if self.app.config['browser']['enabled']:

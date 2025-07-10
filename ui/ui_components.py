@@ -37,7 +37,7 @@ class UIComponents:
         self.app = app
         self.root = app.root
         self.is_dark_mode = self.app.config.get('ui', {}).get('dark_mode', False)
-        # UI variables
+        # UI variables (unchanged)
         self.mouse_enabled = tk.BooleanVar(value=self.app.config.get('mouse', {}).get('enabled', False))
         self.mouse_movements = tk.IntVar(value=self.app.config.get('mouse', {}).get('movements', 5))
         self.mouse_min_duration = tk.DoubleVar(value=self.app.config.get('mouse', {}).get('min_duration', 0.5))
@@ -72,6 +72,114 @@ class UIComponents:
         self.glassy_bg_dark = "#1E1E22"  # Apple-like dark background
         self.glassy_accent_light = "#007AFF"  # Apple blue accent
         self.glassy_accent_dark = "#0A84FF"  # Apple blue accent for dark mode
+
+    def setup_ui(self):
+        # --- Top Status & Controls Bar ---
+        top = ttk.Frame(self.root)
+        top.pack(fill='x', pady=(10, 10))
+        # Status indicator
+        self.status_label = tk.Label(top, text="Status: Stopped", font="Helvetica 12 bold", fg="#fff", bg="#d9534f", width=18)
+        self.status_label.pack(side=tk.LEFT, padx=(15, 10), pady=5)
+        # Start, Pause, Stop buttons
+        start_btn = ttk.Button(top, text="▶ Start", command=self.app.start_simulation)
+        start_btn.pack(side=tk.LEFT, padx=5)
+        pause_btn = ttk.Button(top, text="⏸ Pause", command=lambda: self.app.simulation_controls.handle_user_activity())
+        pause_btn.pack(side=tk.LEFT, padx=5)
+        stop_btn = ttk.Button(top, text="■ Stop", command=self.app.stop_simulation)
+        stop_btn.pack(side=tk.LEFT, padx=5)
+        # Dark mode toggle
+        dark_toggle_btn = ttk.Button(top, text="🌙" if not self.is_dark_mode else "☀️", width=3, command=self.toggle_dark_mode)
+        dark_toggle_btn.pack(side=tk.RIGHT, padx=(0,15))
+        Tooltip(dark_toggle_btn, "Toggle dark/light mode.")
+
+        # --- Tabbed Settings Area ---
+        notebook = ttk.Notebook(self.root)
+        notebook.pack(fill='both', expand=True, padx=15, pady=10)
+
+        # Mouse Tab
+        mouse_tab = ttk.Frame(notebook)
+        notebook.add(mouse_tab, text="🖱️ Mouse")
+        tk.Label(mouse_tab, text="Mouse Activity", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
+        mouse_toggle = ttk.Checkbutton(mouse_tab, text="Enable Mouse Simulation", variable=self.mouse_enabled)
+        mouse_toggle.pack(anchor='w', padx=20, pady=2)
+        row = ttk.Frame(mouse_tab)
+        row.pack(fill='x', pady=3, padx=10)
+        ttk.Label(row, text="Movements:").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.mouse_movements, width=5).pack(side=tk.LEFT, padx=3)
+        ttk.Label(row, text="Scrolls:").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.mouse_scrolls, width=4).pack(side=tk.LEFT, padx=3)
+        ttk.Label(row, text="Scroll Sensitivity:").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.mouse_scroll_sensitivity, width=4).pack(side=tk.LEFT, padx=3)
+        ttk.Label(row, text="H-Scrolls:").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.mouse_hscrolls, width=4).pack(side=tk.LEFT, padx=3)
+        # Scroll interval row
+        scroll_row = ttk.Frame(mouse_tab)
+        scroll_row.pack(fill='x', pady=3, padx=10)
+        ttk.Label(scroll_row, text="Scroll Min Interval:").pack(side=tk.LEFT)
+        ttk.Entry(scroll_row, textvariable=self.mouse_scroll_min_interval, width=4).pack(side=tk.LEFT, padx=2)
+        ttk.Label(scroll_row, text="Scroll Max Interval:").pack(side=tk.LEFT)
+        ttk.Entry(scroll_row, textvariable=self.mouse_scroll_max_interval, width=4).pack(side=tk.LEFT, padx=2)
+
+        # Keyboard Tab
+        keyboard_tab = ttk.Frame(notebook)
+        notebook.add(keyboard_tab, text="⌨️ Keyboard")
+        tk.Label(keyboard_tab, text="Keyboard Activity", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
+        keyboard_toggle = ttk.Checkbutton(keyboard_tab, text="Enable Keyboard Simulation", variable=self.keyboard_enabled)
+        keyboard_toggle.pack(anchor='w', padx=20, pady=2)
+        row = ttk.Frame(keyboard_tab)
+        row.pack(fill='x', pady=3, padx=10)
+        ttk.Label(row, text="Actions:").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.keyboard_actions, width=5).pack(side=tk.LEFT, padx=3)
+        ttk.Label(row, text="Phrases (comma separated):").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.keyboard_phrases, width=30).pack(side=tk.LEFT, padx=3)
+        # Intervals
+        interval_row = ttk.Frame(keyboard_tab)
+        interval_row.pack(fill='x', pady=3, padx=10)
+        ttk.Label(interval_row, text="Min Interval:").pack(side=tk.LEFT)
+        ttk.Entry(interval_row, textvariable=self.keyboard_min_interval, width=4).pack(side=tk.LEFT, padx=2)
+        ttk.Label(interval_row, text="Max Interval:").pack(side=tk.LEFT)
+        ttk.Entry(interval_row, textvariable=self.keyboard_max_interval, width=4).pack(side=tk.LEFT, padx=2)
+        # Dart/code writing
+        code_row = ttk.Frame(keyboard_tab)
+        code_row.pack(fill='x', pady=3, padx=10)
+        ttk.Checkbutton(code_row, text="Enable Dart Mode", variable=self.dart_enabled).pack(side=tk.LEFT, padx=2)
+        ttk.Label(code_row, text="Dart Lines:").pack(side=tk.LEFT)
+        ttk.Entry(code_row, textvariable=self.dart_lines, width=4).pack(side=tk.LEFT, padx=2)
+        ttk.Checkbutton(code_row, text="Enable Code Writing", variable=self.code_writing_enabled).pack(side=tk.LEFT, padx=2)
+
+        # Browser Tab
+        browser_tab = ttk.Frame(notebook)
+        notebook.add(browser_tab, text="🌐 Browser")
+        tk.Label(browser_tab, text="Browser Activity", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
+        browser_toggle = ttk.Checkbutton(browser_tab, text="Enable Browser Simulation", variable=self.browser_enabled)
+        browser_toggle.pack(anchor='w', padx=20, pady=2)
+        row = ttk.Frame(browser_tab)
+        row.pack(fill='x', pady=3, padx=10)
+        ttk.Label(row, text="Headless:").pack(side=tk.LEFT)
+        ttk.Checkbutton(row, variable=self.browser_headless).pack(side=tk.LEFT, padx=2)
+        ttk.Label(row, text="Min Interval:").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.browser_min_interval, width=4).pack(side=tk.LEFT, padx=2)
+        ttk.Label(row, text="Max Interval:").pack(side=tk.LEFT)
+        ttk.Entry(row, textvariable=self.browser_max_interval, width=4).pack(side=tk.LEFT, padx=2)
+
+        # Advanced Tab
+        advanced_tab = ttk.Frame(notebook)
+        notebook.add(advanced_tab, text="⚙️ Advanced")
+        tk.Label(advanced_tab, text="Advanced & UI Settings", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
+        ttk.Checkbutton(advanced_tab, text="Auto-Restart Simulation", variable=self.auto_restart_var).pack(anchor='w', padx=20, pady=2)
+        ttk.Label(advanced_tab, text="Idle Timeout (min):").pack(anchor='w', padx=20, pady=2)
+        ttk.Entry(advanced_tab, textvariable=self.idle_timeout_var, width=4).pack(anchor='w', padx=20, pady=2)
+        ttk.Checkbutton(advanced_tab, text="Enable Hotkey Control", variable=self.hotkey_control_var).pack(anchor='w', padx=20, pady=2)
+        ttk.Checkbutton(advanced_tab, text="Enable Notifications", variable=self.notifications_enabled).pack(anchor='w', padx=20, pady=2)
+        ttk.Checkbutton(advanced_tab, text="Minimize on Start", variable=self.minimize_on_start_var).pack(anchor='w', padx=20, pady=2)
+
+        # --- Log/Output Panel ---
+        log_frame = ttk.Frame(self.root)
+        log_frame.pack(fill='both', expand=False, padx=15, pady=(0,10))
+        tk.Label(log_frame, text="Log Output", font="Helvetica 10 bold").pack(anchor='w')
+        self.log_text = tk.Text(log_frame, height=6, state='normal', wrap='word')
+        self.log_text.pack(fill='both', expand=True)
+        self.log_text.config(state='disabled')
 
     def apply_theme(self):
         # Update dark mode toggle button text if present
@@ -134,152 +242,3 @@ class UIComponents:
         self.app.config['ui']['dark_mode'] = self.is_dark_mode
         self.app.save_config()
         self.apply_theme()
-
-    def setup_ui(self):
-        # Top bar with app title and dark mode
-        top = ttk.Frame(self.root)
-        top.pack(fill='x', pady=(5, 10))
-        tk.Label(top, text="Android Studio v1.0.0", font="Helvetica 14 bold").pack(side=tk.LEFT, padx=(15,0))
-        dark_toggle_btn = ttk.Button(top, text="🌙" if not self.is_dark_mode else "☀️", width=3, command=self.toggle_dark_mode)
-        dark_toggle_btn.pack(side=tk.RIGHT, padx=(0,15))
-        Tooltip(dark_toggle_btn, "Toggle dark/light mode.")
-
-        # Tabbed layout with icons
-        notebook = ttk.Notebook(self.root)
-        notebook.pack(fill='both', expand=True, padx=15, pady=10)
-
-        # Helper for minimal toggle buttons
-        def make_toggle(parent, var, label, tooltip, command=None):
-            def update_btn():
-                btn.config(text=f"{label}: {'ON' if var.get() else 'OFF'}", style="Enabled.TButton" if var.get() else "Disabled.TButton")
-            def toggle():
-                var.set(not var.get())
-                update_btn()
-                if command:
-                    command()
-            btn = ttk.Button(parent, command=toggle, cursor="hand2")
-            btn.pack(fill='x', pady=3, padx=10)
-            Tooltip(btn, tooltip)
-            update_btn()
-            return btn
-
-        style = ttk.Style()
-        style.configure("Enabled.TButton", foreground="white", background=self.glassy_accent_light if not self.is_dark_mode else self.glassy_accent_dark, font="Helvetica 10 bold", borderwidth=0, relief="flat", padding=(8, 4))
-        style.map("Enabled.TButton", background=[('active', '#005a9e')])
-        style.configure("Disabled.TButton", foreground="#444" if not self.is_dark_mode else "#AAA", background="#e0e0e0" if not self.is_dark_mode else "#2A2A2E", font="Helvetica 10", borderwidth=0, relief="flat", padding=(8, 4))
-        style.map("Disabled.TButton", background=[('active', '#cccccc' if not self.is_dark_mode else '#333333')])
-        style.configure("Section.TLabel", font="Helvetica 11 bold", padding=(0,6,0,2))
-
-        # Mouse Tab
-        mouse_tab = ttk.Frame(notebook)
-        notebook.add(mouse_tab, text="🖱️ Mouse")
-        tk.Label(mouse_tab, text="Mouse Activity", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
-        make_toggle(mouse_tab, self.mouse_enabled, "Mouse Activity", "Enable or disable mouse activity.")
-        row = ttk.Frame(mouse_tab)
-        row.pack(fill='x', pady=3, padx=10)
-        ttk.Label(row, text="Movements:").pack(side=tk.LEFT)
-        ttk.Entry(row, textvariable=self.mouse_movements, width=5).pack(side=tk.LEFT, padx=3)
-        ttk.Label(row, text="Scrolls:").pack(side=tk.LEFT)
-        scroll_entry = ttk.Entry(row, textvariable=self.mouse_scrolls, width=4)
-        scroll_entry.pack(side=tk.LEFT, padx=3)
-        Tooltip(scroll_entry, "Number of vertical scroll actions per mouse cycle.")
-        ttk.Label(row, text="Scroll Sensitivity:").pack(side=tk.LEFT)
-        scroll_sens_entry = ttk.Entry(row, textvariable=self.mouse_scroll_sensitivity, width=4)
-        scroll_sens_entry.pack(side=tk.LEFT, padx=3)
-        Tooltip(scroll_sens_entry, "How much each scroll action moves (lines per scroll).")
-        ttk.Label(row, text="H-Scrolls:").pack(side=tk.LEFT)
-        hscroll_entry = ttk.Entry(row, textvariable=self.mouse_hscrolls, width=4)
-        hscroll_entry.pack(side=tk.LEFT, padx=3)
-        Tooltip(hscroll_entry, "Number of horizontal scroll actions per mouse cycle.")
-        # Scroll interval row
-        scroll_row = ttk.Frame(mouse_tab)
-        scroll_row.pack(fill='x', pady=3, padx=10)
-        ttk.Label(scroll_row, text="Scroll Min Interval:").pack(side=tk.LEFT)
-        ttk.Entry(scroll_row, textvariable=self.mouse_scroll_min_interval, width=4).pack(side=tk.LEFT, padx=2)
-        ttk.Label(scroll_row, text="Scroll Max Interval:").pack(side=tk.LEFT)
-        ttk.Entry(scroll_row, textvariable=self.mouse_scroll_max_interval, width=4).pack(side=tk.LEFT, padx=2)
-        Tooltip(scroll_row, "Random delay between scrolls for realism.")
-
-        # Keyboard Tab
-        keyboard_tab = ttk.Frame(notebook)
-        notebook.add(keyboard_tab, text="⌨️ Keyboard")
-        tk.Label(keyboard_tab, text="Keyboard Activity", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
-        make_toggle(keyboard_tab, self.keyboard_enabled, "Keyboard Activity", "Enable or disable keyboard activity.")
-        row = ttk.Frame(keyboard_tab)
-        row.pack(fill='x', pady=3, padx=10)
-        ttk.Label(row, text="Actions:").pack(side=tk.LEFT)
-        ttk.Entry(row, textvariable=self.keyboard_actions, width=5).pack(side=tk.LEFT, padx=3)
-        ttk.Label(row, text="Phrases:").pack(side=tk.LEFT)
-        ttk.Entry(row, textvariable=self.keyboard_phrases, width=20).pack(side=tk.LEFT, padx=3)
-        make_toggle(keyboard_tab, self.dart_enabled, "Dart Code", "Enable or disable Dart code simulation.")
-        make_toggle(keyboard_tab, self.code_writing_enabled, "Code Writing Loop", "Enable or disable automatic code writing and erasing loop.")
-
-        # Browser Tab
-        browser_tab = ttk.Frame(notebook)
-        notebook.add(browser_tab, text="🌐 Browser")
-        tk.Label(browser_tab, text="Browser Activity", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
-        make_toggle(browser_tab, self.browser_enabled, "Browser Activity", "Enable or disable browser activity.")
-        make_toggle(browser_tab, self.browser_headless, "Headless Mode", "Run browser in headless (no window) mode.")
-
-        # System Tab
-        system_tab = ttk.Frame(notebook)
-        notebook.add(system_tab, text="⚙️ System")
-        tk.Label(system_tab, text="System Settings", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
-        make_toggle(system_tab, self.auto_restart_var, "Auto-Restart", "Automatically restart after user inactivity.", self.app.toggle_auto_restart)
-        make_toggle(system_tab, self.hotkey_control_var, "Hotkey Control", "Enable or disable global hotkeys.", self.app.toggle_hotkey_control)
-        make_toggle(system_tab, self.notifications_enabled, "Notifications", "Show pop-up notifications for important events.", self.app.toggle_notifications)
-        make_toggle(system_tab, self.minimize_on_start_var, "Minimize to Tray on Start", "If enabled, the app will start minimized to the system tray.", self.app.toggle_minimize_on_start)
-        row = ttk.Frame(system_tab)
-        row.pack(fill='x', pady=3, padx=10)
-        ttk.Label(row, text="Idle Timeout (min):").pack(side=tk.LEFT)
-        ttk.Entry(row, textvariable=self.idle_timeout_var, width=4).pack(side=tk.LEFT, padx=3)
-        ttk.Button(row, text="Apply", command=self.app.update_idle_timeout).pack(side=tk.LEFT, padx=5)
-
-        # About Tab
-        about_tab = ttk.Frame(notebook)
-        notebook.add(about_tab, text="ℹ️ About")
-        tk.Label(about_tab, text="About Android Studio", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
-        tk.Label(about_tab, text="Version: 1.0.0", font="Helvetica 10").pack(anchor='w', padx=10, pady=2)
-        tk.Label(about_tab, text="Made by: Yasir Subhani", font="Helvetica 10").pack(anchor='w', padx=10, pady=2)
-        tk.Label(about_tab, text="GitHub Repository:", font="Helvetica 10").pack(anchor='w', padx=10, pady=2)
-        repo_link = tk.Label(about_tab, text="https://github.com/yasirSub", font="Helvetica 10 underline", foreground=self.glassy_accent_light if not self.is_dark_mode else self.glassy_accent_dark, cursor="hand2")
-        repo_link.pack(anchor='w', padx=10, pady=2)
-        repo_link.bind("<Button-1>", lambda e: self.app.open_url("https://github.com/yasirSub"))
-        Tooltip(repo_link, "Click to open repository in browser.")
-        
-        # Logs Tab
-        logs_tab = ttk.Frame(notebook)
-        notebook.add(logs_tab, text="📝 Logs")
-        tk.Label(logs_tab, text="Log Output", font="Helvetica 11 bold", pady=6).pack(anchor='w', padx=10, pady=(10,0))
-        self.log_text = tk.Text(logs_tab, height=12, wrap='word', font="Helvetica 9", state='normal')
-        self.log_text.pack(fill='both', expand=True, padx=10, pady=10)
-        scrollbar = ttk.Scrollbar(logs_tab, orient=tk.VERTICAL, command=self.log_text.yview)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        self.log_text['yscrollcommand'] = scrollbar.set
-        self.app.update_log_display()
-
-        # Controls
-        ctrl = ttk.Frame(self.root)
-        ctrl.pack(fill='x', pady=10, padx=15)
-        for text, command in [
-            ("Save", self.app.update_config),
-            ("Apply", self.app.apply_changes),
-            ("Start", self.app.start_simulation),
-            ("Stop", self.app.stop_simulation),
-            ("Minimize", self.app.system_tray.minimize_to_tray),
-            ("Exit", self.app.exit_application)
-        ]:
-            ttk.Button(ctrl, text=text, command=command, cursor="hand2", style="Control.TButton").pack(side=tk.LEFT, padx=5, expand=True, fill='x')
-
-        # Status Bar (fixed at bottom, visually separated)
-        status_frame = ttk.Frame(self.root)
-        status_frame.pack(side=tk.BOTTOM, fill='x')
-        self.status_label = ttk.Label(status_frame, text="Status: Simulation Stopped", anchor='w', font="Helvetica 9")
-        self.status_label.pack(fill='x', pady=(0, 5), padx=15)
-        status_frame.configure(style="StatusBar.TFrame")
-
-        # Set window icon if available
-        try:
-            self.root.iconbitmap('Android_Studio_icon_(2023).ico')
-        except Exception:
-            pass

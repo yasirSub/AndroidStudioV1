@@ -5,11 +5,15 @@ Anoid is a highly stealthy, user-configurable background activity simulator for 
 ## Features
 
 - **Stealth & Minimalism**: Runs invisibly, only visible in the tray when minimized. All files and icons use generic names (anoid.json, anoid.log). UI is minimal and modern.
+- **Status Indicator**: System tray icon changes color based on simulation status:
+  - 🔴 **Red**: Simulation stopped
+  - 🟢 **Green**: Simulation running/active
+  - 🔵 **Blue**: Simulation paused (user activity detected)
 - **Simulation**: 
   - Mouse: Human-like movements, clicks, vertical/horizontal scrolls, configurable sensitivity and intervals.
   - Keyboard: Realistic typing, random phrases, typos, and hotkeys.
   - Browser: Headless Chrome activity, random searches, and browsing.
-- **User Activity Detection**: Pauses simulation instantly when you move the mouse or type, resumes after 44 seconds of inactivity.
+- **Smart User Activity Detection**: Pauses simulation instantly when you move the mouse or type, resumes after 3 seconds of inactivity.
 - **Tray Integration**: Minimizes to tray by default and after starting. Tray menu allows show, start, stop, and exit.
 - **Configurable**: All features, intervals, and behaviors are user-configurable via the UI or `config/anoid.json`.
 - **Global Hotkey**: (Ctrl+Shift+P) to pause/resume simulation (if enabled).
