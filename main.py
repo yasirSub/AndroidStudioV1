@@ -1,4 +1,4 @@
-import pyautogui
+import pyautogui  # type: ignore
 pyautogui.FAILSAFE = False  # Disable fail-safe to prevent interruption
 import time
 import random
@@ -6,11 +6,12 @@ import json
 import sys
 import logging
 from datetime import datetime
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import keyboard
+import selenium  # type: ignore
+from selenium import webdriver  # type: ignore
+from selenium.webdriver.chrome.options import Options  # type: ignore
+from selenium.webdriver.common.by import By  # type: ignore
+from selenium.webdriver.common.keys import Keys  # type: ignore
+import keyboard  # type: ignore
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', 
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 # Load configuration
 def load_config():
     try:
-        with open('config.json', 'r') as file:
+        with open('config/anoid.json', 'r') as file:
             return json.load(file)
     except Exception as e:
         logger.error(f"Failed to load configuration: {e}")

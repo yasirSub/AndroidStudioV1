@@ -16,9 +16,11 @@ class SystemTray:
         self.app = app
         self.icon = None
         self.tray_thread = None
-        self.logger = logging.getLogger("anoid")
+        self.logger = logging.getLogger("android_studio")
         self.current_status = "stopped"  # stopped, running, paused
-        self.setup_system_tray()
+        self.tray_enabled = getattr(app, 'tray_enabled', True)  # Default to True
+        if self.tray_enabled:
+            self.setup_system_tray()
 
     def create_status_icon(self, status):
         """Create a colored icon based on status"""
@@ -34,36 +36,29 @@ class SystemTray:
         
         color = colors.get(status, (128, 128, 128))  # Gray as default
         
-        # Create a 64x64 image with the status color
-        image = Image.new('RGB', (64, 64), color)
+        # Create a 16x16 image with the status color (standard Windows tray icon size)
+        image = Image.new('RGBA', (16, 16), color + (0,))
         draw = ImageDraw.Draw(image)
-        
         # Add a simple status indicator (circle in center)
-        center_x, center_y = 32, 32
-        radius = 20
-        
+        center_x, center_y = 8, 8
+        radius = 5
         # Draw outer circle
         draw.ellipse([center_x - radius, center_y - radius, 
                      center_x + radius, center_y + radius], 
-                    outline=(255, 255, 255), width=2)
-        
+                    outline=(255, 255, 255, 255), width=2)
         # Draw inner circle based on status
         if status == "running":
-            # Green circle for running
-            draw.ellipse([center_x - radius + 4, center_y - radius + 4,
-                         center_x + radius - 4, center_y + radius - 4],
-                        fill=(0, 200, 0))
+            draw.ellipse([center_x - radius + 1, center_y - radius + 1,
+                         center_x + radius - 1, center_y + radius - 1],
+                        fill=(0, 200, 0, 255))
         elif status == "paused":
-            # Blue circle for paused
-            draw.ellipse([center_x - radius + 4, center_y - radius + 4,
-                         center_x + radius - 4, center_y + radius - 4],
-                        fill=(0, 0, 200))
+            draw.ellipse([center_x - radius + 1, center_y - radius + 1,
+                         center_x + radius - 1, center_y + radius - 1],
+                        fill=(0, 0, 200, 255))
         elif status == "stopped":
-            # Red circle for stopped
-            draw.ellipse([center_x - radius + 4, center_y - radius + 4,
-                         center_x + radius - 4, center_y + radius - 4],
-                        fill=(200, 0, 0))
-        
+            draw.ellipse([center_x - radius + 1, center_y - radius + 1,
+                         center_x + radius - 1, center_y + radius - 1],
+                        fill=(200, 0, 0, 255))
         return image
 
     def update_status(self, status):
@@ -73,9 +68,9 @@ class SystemTray:
             
         self.current_status = status
         status_text = {
-            "stopped": "Anoid - Stopped",
-            "running": "Anoid - Running", 
-            "paused": "Anoid - Paused"
+            "stopped": "Android Studio - Stopped",
+            "running": "Android Studio - Active", 
+            "paused": "Android Studio - Paused"
         }
         
         try:
@@ -83,11 +78,13 @@ class SystemTray:
             new_image = self.create_status_icon(status)
             if new_image:
                 self.icon.icon = new_image
-                self.icon.title = status_text.get(status, "Anoid")
+                self.icon.title = status_text.get(status, "Android Studio")
         except Exception as e:
             self.logger.error(f"Failed to update tray status: {e}")
 
     def setup_system_tray(self):
+        if not self.tray_enabled:
+            return
         if pystray and Image:
             try:
                 # Create initial icon (stopped status)
@@ -98,7 +95,7 @@ class SystemTray:
                     pystray.MenuItem("Stop", self._tray_stop_simulation),
                     pystray.MenuItem("Exit", self._tray_exit_application)
                 )
-                self.icon = pystray.Icon("Anoid", image, "Anoid - Stopped", menu)
+                self.icon = pystray.Icon("AndroidStudio", image, "Android Studio - Stopped", menu)
                 self.tray_thread = threading.Thread(target=self.icon.run, daemon=True)
                 self.tray_thread.start()
             except Exception as e:
@@ -135,3 +132,11 @@ class SystemTray:
                 self.icon.stop()
         except Exception:
             pass
+
+    def hide_tray_icon(self):
+        if self.icon:
+            try:
+                self.icon.stop()
+                self.icon = None
+            except Exception as e:
+                self.logger.warning(f"Failed to hide tray icon: {e}")

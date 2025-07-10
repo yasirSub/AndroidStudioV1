@@ -14,7 +14,7 @@ class SimulationControls:
         self.user_stopped_simulation = False
         self.resume_timer = None
         self.paused = False  # <-- Add paused flag
-        self.logger = logging.getLogger("anoid")
+        self.logger = logging.getLogger("android_studio")
 
     def start_simulation(self):
         if not self.simulation_running:

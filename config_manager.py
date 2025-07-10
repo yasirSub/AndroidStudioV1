@@ -3,7 +3,7 @@ import os
 from tkinter import messagebox
 
 class ConfigManager:
-    def __init__(self, config_file="config.json"):
+    def __init__(self, config_file="config/anoid.json"):
         self.config_file = config_file
         self.config = self.load_config()
 

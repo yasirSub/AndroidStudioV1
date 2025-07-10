@@ -34,12 +34,13 @@
     "max_interval": 30.0
   },
   "ui": {
-    "dark_mode": false,
+    "dark_mode": true,
+    "auto_restart": true,
+    "idle_timeout_minutes": 1,
+    "minimize_on_start": true,
     "hotkey_control": false,
     "notifications_enabled": false,
-    "idle_timeout_minutes": 1,
-    "auto_restart": true,
-    "minimize_on_start": true,
+    "pause_after_activity": 3,
     "first_run_completed": true
   }
 }
