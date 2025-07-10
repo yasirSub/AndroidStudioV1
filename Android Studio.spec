@@ -32,7 +32,9 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    version='version.txt',
     icon=['Android_Studio_icon.ico'],
+    manifest='admin.manifest',
 )
 coll = COLLECT(
     exe,

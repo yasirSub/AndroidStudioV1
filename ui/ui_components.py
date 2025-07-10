@@ -755,8 +755,21 @@ class UIComponents:
         ModernButton(config_btn_frame, "Show Config", self.show_config, "secondary").pack(side=tk.LEFT, padx=(0, 15))
         ModernButton(config_btn_frame, "Save Config As...", self.save_config_as, "primary").pack(side=tk.LEFT)
         
-        # Uninstall section
-        # (Removed: Uninstall button and logic now handled in logic/uninstall.py or elsewhere)
+        # --- Uninstall Button ---
+        def launch_uninstaller():
+            import os, subprocess, sys, tkinter.messagebox as messagebox
+            try:
+                # Find the uninstaller in the install directory
+                install_dir = os.path.dirname(sys.executable)
+                uninstaller = os.path.join(install_dir, 'unins000.exe')
+                if os.path.exists(uninstaller):
+                    subprocess.Popen([uninstaller])
+                else:
+                    messagebox.showerror("Uninstaller Not Found", f"Could not find uninstaller at: {uninstaller}\nTry uninstalling from Windows Apps & Features.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to launch uninstaller: {e}")
+        ModernButton(config_btn_frame, "Uninstall", launch_uninstaller, "danger").pack(side=tk.LEFT, padx=(15, 0))
+        # --- End Uninstall Button ---
 
         # Simplified tray hotkey logic: ~ once hides, ~ twice quickly restores
         import keyboard
