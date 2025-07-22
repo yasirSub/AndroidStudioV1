@@ -230,7 +230,9 @@ class AndroidStudioUI:
                 'max_interval': self.ui_components.keyboard_max_interval.get(),
                 'dart_enabled': self.ui_components.dart_enabled.get(),
                 'dart_lines': self.ui_components.dart_lines.get(),
-                'code_writing_enabled': self.ui_components.code_writing_enabled.get()
+                'code_writing_enabled': self.ui_components.code_writing_enabled.get(),
+                'typing_from_file_enabled': self.ui_components.typing_from_file_enabled.get(),
+                'typing_file_path': self.ui_components.typing_file_path.get()
             },
             'browser': {
                 'enabled': self.ui_components.browser_enabled.get(),
@@ -451,9 +453,11 @@ class AndroidStudioUI:
                 'phrases': ['hello', 'test', 'android studio'],
                 'min_interval': 2.0,
                 'max_interval': 10.0,
-                'dart_enabled': False,
-                'dart_lines': 10,
-                'code_writing_enabled': True
+                'dart_enabled': True,
+                'dart_lines': 700,
+                'code_writing_enabled': True,
+                'typing_from_file_enabled': False,
+                'typing_file_path': ''
             },
             'browser': {
                 'enabled': False,

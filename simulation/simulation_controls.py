@@ -190,28 +190,122 @@ class SimulationControls:
                         self.logger.error("pyautogui not installed. Keyboard simulation will not work.")
                         break
                     self.logger.info("Starting keyboard simulation...")
-                    for _ in range(self.app.config['keyboard']['actions']):
-                        if not self.simulation_running:
-                            break
-                        while self.paused and self.simulation_running:
-                            time.sleep(0.1)
-                        if self.app.ui_components.code_writing_enabled.get():
-                            # Write a marker and some code
-                            pyautogui.write("--------------------------------\n")
-                            code_snippet = "def example_function():\n    print('This is a test code snippet.')\n    return True\n"
-                            pyautogui.write(code_snippet)
-                            time.sleep(random.uniform(2.0, 4.0))  # Wait before erasing
-                            # Erase the written code
-                            pyautogui.hotkey('ctrl', 'a')  # Select all
-                            time.sleep(0.5)
-                            pyautogui.press('backspace')  # Delete selected text
-                        time.sleep(random.uniform(0.2, 1.0))
-                        for _ in range(int(random.uniform(self.app.config['keyboard']['min_interval'], self.app.config['keyboard']['max_interval']) * 10)):
+                    typing_from_file = self.app.config['keyboard'].get('typing_from_file_enabled', False)
+                    typing_file_path = self.app.config['keyboard'].get('typing_file_path', '')
+                    dart_enabled = self.app.config['keyboard'].get('dart_enabled', False)
+                    code_writing_enabled = self.app.config['keyboard'].get('code_writing_enabled', False)
+                    phrases = self.app.config['keyboard'].get('phrases', ["hello"])
+                    dart_lines = self.app.config['keyboard'].get('dart_lines', 10)
+                    actions = self.app.config['keyboard'].get('actions', 3)
+                    min_interval = self.app.config['keyboard'].get('min_interval', 2.0)
+                    max_interval = self.app.config['keyboard'].get('max_interval', 10.0)
+
+                    dart_code_snippets = [
+                        "void main() {\n  print('Hello, World!');\n}",
+                        "class MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('My App')),\n        body: Center(child: Text('Welcome')),\n      ),\n    );\n  }\n}",
+                        "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 2));\n  return 'Data fetched';\n}",
+                        "List<int> numbers = [1, 2, 3, 4, 5];\nint sum = numbers.reduce((a, b) => a + b);",
+                        "import 'package:flutter/material.dart';\nvoid main() => runApp(MyApp());",
+                        "enum Status { LOADING, SUCCESS, ERROR }\nStatus currentStatus = Status.LOADING;",
+                        "Map<String, dynamic> user = {\n  'name': 'John',\n  'age': 30,\n  'isActive': true\n};",
+                        "Stream<int> countStream() async* {\n  for (int i = 1; i <= 5; i++) {\n    yield i;\n    await Future.delayed(Duration(seconds: 1));\n  }\n}",
+                        "Widget _buildItem(BuildContext context, int index) {\n  return ListTile(\n    title: Text('Item $index'),\n    onTap: () => print('Tapped item $index'),\n  );\n}",
+                        "final TextEditingController _controller = TextEditingController();\nString getText() => _controller.text;"
+                    ]
+
+                    if typing_from_file and typing_file_path:
+                        # --- Typing from File Logic ---
+                        try:
+                            with open(typing_file_path, 'r', encoding='utf-8') as f:
+                                lines = f.readlines()
+                            if not lines:
+                                self.logger.warning(f"Selected file {typing_file_path} is empty.")
+                            else:
+                                idx = 0
+                                while self.simulation_running and typing_from_file and typing_file_path:
+                                    line = lines[idx % len(lines)].rstrip('\n')
+                                    pyautogui.write(line, interval=0.08)
+                                    pyautogui.press('enter')
+                                    idx += 1
+                                    # Check for pause or stop
+                                    for _ in range(int(random.uniform(min_interval, max_interval) * 10)):
+                                        if not self.simulation_running:
+                                            break
+                                        while self.paused and self.simulation_running:
+                                            time.sleep(0.1)
+                                        time.sleep(0.1)
+                                    # Reload file if changed
+                                    try:
+                                        with open(typing_file_path, 'r', encoding='utf-8') as f:
+                                            new_lines = f.readlines()
+                                        if new_lines != lines:
+                                            lines = new_lines
+                                            idx = 0
+                                    except Exception:
+                                        pass
+                        except Exception as e:
+                            self.logger.error(f"Failed to type from file: {e}")
+                    elif dart_enabled:
+                        for _ in range(actions):
                             if not self.simulation_running:
                                 break
                             while self.paused and self.simulation_running:
                                 time.sleep(0.1)
-                            time.sleep(0.1)
+                            code_snippet = random.choice(dart_code_snippets)
+                            lines = code_snippet.split('\n')
+                            for i in range(min(len(lines), dart_lines)):
+                                line = lines[i]
+                                for char in line:
+                                    pyautogui.write(char)
+                                    time.sleep(random.uniform(0.03, 0.1))
+                                pyautogui.press('enter')
+                                time.sleep(random.uniform(0.1, 0.3))
+                            pyautogui.scroll(-random.randint(100, 300))
+                            time.sleep(random.uniform(0.5, 1.5))
+                            pyautogui.scroll(random.randint(50, 150))
+                            self.logger.info("Dart code simulation cycle completed.")
+                            for _ in range(int(random.uniform(min_interval, max_interval) * 10)):
+                                if not self.simulation_running:
+                                    break
+                                while self.paused and self.simulation_running:
+                                    time.sleep(0.1)
+                                time.sleep(0.1)
+                    elif code_writing_enabled:
+                        for _ in range(actions):
+                            if not self.simulation_running:
+                                break
+                            while self.paused and self.simulation_running:
+                                time.sleep(0.1)
+                            pyautogui.write("--------------------------------\n")
+                            code_snippet = "def example_function():\n    print('This is a test code snippet.')\n    return True\n"
+                            pyautogui.write(code_snippet)
+                            time.sleep(random.uniform(2.0, 4.0))  # Wait before erasing
+                            pyautogui.hotkey('ctrl', 'a')  # Select all
+                            time.sleep(0.5)
+                            pyautogui.press('backspace')  # Delete selected text
+                            time.sleep(random.uniform(0.2, 1.0))
+                            for _ in range(int(random.uniform(min_interval, max_interval) * 10)):
+                                if not self.simulation_running:
+                                    break
+                                while self.paused and self.simulation_running:
+                                    time.sleep(0.1)
+                                time.sleep(0.1)
+                    else:
+                        for _ in range(actions):
+                            if not self.simulation_running:
+                                break
+                            while self.paused and self.simulation_running:
+                                time.sleep(0.1)
+                            phrase = random.choice(phrases)
+                            pyautogui.write(phrase, interval=random.uniform(0.05, 0.15))
+                            pyautogui.press('enter')
+                            time.sleep(random.uniform(0.2, 1.0))
+                            for _ in range(int(random.uniform(min_interval, max_interval) * 10)):
+                                if not self.simulation_running:
+                                    break
+                                while self.paused and self.simulation_running:
+                                    time.sleep(0.1)
+                                time.sleep(0.1)
                     self.logger.info("Keyboard simulation cycle completed.")
                 if self.app.config['browser']['enabled']:
                     self.logger.info("Starting browser simulation...")

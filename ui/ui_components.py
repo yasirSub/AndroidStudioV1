@@ -634,6 +634,27 @@ class UIComponents:
         ModernCheckbox(advanced_frame, "Enable Dart Mode", self.dart_enabled).pack(anchor='w', pady=5)
         ModernCheckbox(advanced_frame, "Enable Code Writing", self.code_writing_enabled).pack(anchor='w', pady=5)
         
+        # --- Typing from File Feature ---
+        import tkinter.filedialog as filedialog
+        self.typing_from_file_enabled = tk.BooleanVar(value=getattr(self, 'typing_from_file_enabled', False))
+        self.typing_file_path = tk.StringVar(value=getattr(self, 'typing_file_path', ''))
+        
+        def select_file():
+            file_path = filedialog.askopenfilename(
+                title="Select Text File",
+                filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+            )
+            if file_path:
+                self.typing_file_path.set(file_path)
+                file_label.config(text=f"Selected: {file_path}")
+        
+        ModernCheckbox(advanced_frame, "Enable Typing from File", self.typing_from_file_enabled).pack(anchor='w', pady=5)
+        file_btn = ModernButton(advanced_frame, "Choose Text File", select_file, "primary")
+        file_btn.pack(anchor='w', pady=(0, 5))
+        file_label = tk.Label(advanced_frame, text=f"Selected: {self.typing_file_path.get()}", font=("Segoe UI", 10), fg=fg, bg=bg)
+        file_label.pack(anchor='w', pady=(0, 5))
+        # --- End Typing from File Feature ---
+        
         dart_row = tk.Frame(advanced_frame, bg=self.get_color('card_bg'))
         dart_row.pack(fill='x', pady=15)
         
@@ -939,6 +960,15 @@ class UIComponents:
             fg=fg, bg=bg
         )
         version_label.pack(side=tk.LEFT)
+        
+        # --- Add Apply Button ---
+        from functools import partial
+        apply_btn = ModernButton(
+            footer_content, "Apply", command=self.app.apply_changes, style="success"
+        )
+        apply_btn.pack(side=tk.LEFT, padx=(20, 0))
+        ModernTooltip(apply_btn, "Apply all pending settings changes")
+        # --- End Apply Button ---
         
         # Quick stats with better typography
         fg, bg = self.get_fg_bg()

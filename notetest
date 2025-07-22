@@ -1,0 +1,23 @@
+--------------------------------
+def example_function():
+    print('This is a test code snippet.')
+        return True
+    void main() {
+          print('Hello, World!');
+    }
+    enum Status { LOADING, SUCCESS, ERROR }
+    Status currentStatus = Status.LOADING;
+    Map<String, dynamic> user = {
+          'name': 'John',
+            'age': 30,
+              'isActive': True};
+              final TextEditingController _controller = TextEditingController();
+              String getText() => _controller.text;
+              final TextEditingController _controller = TextEditingController();
+              String getText() => _controller.text;
+              import 'package:flutter/material.dart';
+              void main() => runApp(MyApp());Edit
+              final TextEditingController _controller = Text
+    }
+    }ingController();
+    String getText() => _con

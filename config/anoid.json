@@ -23,9 +23,11 @@
     ],
     "min_interval": 2.0,
     "max_interval": 10.0,
-    "dart_enabled": false,
-    "dart_lines": 10,
-    "code_writing_enabled": true
+    "dart_enabled": true,
+    "dart_lines": 800,
+    "code_writing_enabled": true,
+    "typing_from_file_enabled": false,
+    "typing_file_path": ""
   },
   "browser": {
     "enabled": true,
@@ -39,9 +41,6 @@
     "idle_timeout_minutes": 1,
     "minimize_on_start": true,
     "hotkey_control": false,
-    "notifications_enabled": false,
-    "pause_after_activity": 3,
-    "first_run_completed": true,
-    "auto_start_simulation": true
+    "notifications_enabled": false
   }
 }
