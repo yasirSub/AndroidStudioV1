@@ -11,7 +11,11 @@ from tkinter import messagebox
 import keyboard as global_keyboard  # for hotkey  # type: ignore
 
 # Add the project root directory to sys.path to ensure imports work correctly
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    project_root = sys._MEIPASS
+else:
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 

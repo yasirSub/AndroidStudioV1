@@ -54,7 +54,12 @@ def main():
     parser.add_argument("--gui", action="store_true", help="Run with Graphical User Interface")
     args = parser.parse_args()
 
-    project_root = os.path.dirname(os.path.abspath(__file__))
+    # Handle PyInstaller path resolution
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        project_root = sys._MEIPASS
+    else:
+        project_root = os.path.dirname(os.path.abspath(__file__))
+    
     config_dir = os.path.join(project_root, "config")
     os.makedirs(config_dir, exist_ok=True)
     
