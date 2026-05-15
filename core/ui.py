@@ -1,10 +1,12 @@
-# pyright: reportOptionalMemberAccess=false
 import tkinter as tk
 import json
 import logging
 import sys
 import os
 import shutil
+import time
+import threading
+import random
 from tkinter import messagebox
 import keyboard as global_keyboard  # for hotkey  # type: ignore
 
@@ -20,9 +22,9 @@ from simulation.simulation_controls import SimulationControls
 class AndroidStudioUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Android Studio")
-        self.root.geometry("900x700")  # Larger window for modern UI
-        self.root.minsize(800, 600)
+        self.root.title("Anoid")
+        self.root.geometry("800x600")
+        self.root.minsize(750, 550)
         
         # Set modern window properties
         self.root.configure(bg='#F7FAFC')  # Light background as default
@@ -31,12 +33,10 @@ class AndroidStudioUI:
         self.center_window()
         
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        self.config_file = os.path.join(project_root, "config", "anoid.json")
+        from logic.config_manager import ConfigManager
+        self.config_manager = ConfigManager()
+        self.config = self.config_manager.get_config()
         self.log_file = os.path.join(project_root, "config", "anoid.log")
-        
-        # Migrate old config/log if found
-        self.migrate_old_files()
-        self.config = self.load_config()
         self.process = None
         self.log_messages = []
         self.auto_restart_enabled = self.config.get('ui', {}).get('auto_restart', True)
@@ -48,11 +48,10 @@ class AndroidStudioUI:
         
         # Initialize components
         self.system_tray = SystemTray(self)
-        self.ui_components = UIComponents(self)
+        self.ui_components = UIComponents(self.root, self)
         self.simulation_controls = SimulationControls(self)
         
-        # Setup UI after components are initialized
-        self.setup_ui()
+        # Setup UI is now handled by UIComponents.__init__
         
         # Window management
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -141,16 +140,22 @@ class AndroidStudioUI:
             self.ui = ui
 
         def emit(self, record):
-            log_message = self.format(record)
-            self.ui.log_messages.append(log_message)
-            
-            # Limit to last 100 messages to prevent memory issues
-            if len(self.ui.log_messages) > 100:
-                self.ui.log_messages.pop(0)
-            
-            # Update UI in main thread
-            if hasattr(self.ui.ui_components, 'log_text') and self.ui.ui_components.log_text:
-                self.ui.root.after(0, self.ui.update_log_display)
+            try:
+                log_message = self.format(record)
+                self.ui.log_messages.append(log_message)
+                
+                if len(self.ui.log_messages) > 100:
+                    self.ui.log_messages.pop(0)
+                
+                # Safety check: Update UI in main thread if it's still alive
+                if hasattr(self.ui, 'ui_components') and hasattr(self.ui.ui_components, 'log_text'):
+                    try:
+                        self.ui.root.after(0, self.ui.update_log_display)
+                    except (tk.TclError, RuntimeError, AttributeError):
+                        # Handle cases where the main loop is not running or root is destroyed
+                        pass
+            except Exception:
+                pass
 
     def setup_ui(self):
         """Setup the main UI"""
@@ -207,50 +212,27 @@ class AndroidStudioUI:
             self.exit_application()
 
     def update_config(self):
-        """Update configuration from UI components"""
-        new_config = {
-            'mouse': {
-                'enabled': self.ui_components.mouse_enabled.get(),
-                'movements': self.ui_components.mouse_movements.get(),
-                'min_duration': self.ui_components.mouse_min_duration.get(),
-                'max_duration': self.ui_components.mouse_max_duration.get(),
-                'min_interval': self.ui_components.mouse_min_interval.get(),
-                'max_interval': self.ui_components.mouse_max_interval.get(),
-                'scrolls': self.ui_components.mouse_scrolls.get(),
-                'scroll_sensitivity': self.ui_components.mouse_scroll_sensitivity.get(),
-                'hscrolls': self.ui_components.mouse_hscrolls.get(),
-                'scroll_min_interval': self.ui_components.mouse_scroll_min_interval.get(),
-                'scroll_max_interval': self.ui_components.mouse_scroll_max_interval.get()
-            },
-            'keyboard': {
-                'enabled': self.ui_components.keyboard_enabled.get(),
-                'actions': self.ui_components.keyboard_actions.get(),
-                'phrases': [p.strip() for p in self.ui_components.keyboard_phrases.get().split(',')],
-                'min_interval': self.ui_components.keyboard_min_interval.get(),
-                'max_interval': self.ui_components.keyboard_max_interval.get(),
-                'dart_enabled': self.ui_components.dart_enabled.get(),
-                'dart_lines': self.ui_components.dart_lines.get(),
-                'code_writing_enabled': self.ui_components.code_writing_enabled.get(),
-                'typing_from_file_enabled': self.ui_components.typing_from_file_enabled.get(),
-                'typing_file_path': self.ui_components.typing_file_path.get()
-            },
-            'browser': {
-                'enabled': self.ui_components.browser_enabled.get(),
-                'headless': self.ui_components.browser_headless.get(),
-                'min_interval': self.ui_components.browser_min_interval.get(),
-                'max_interval': self.ui_components.browser_max_interval.get()
-            },
-            'ui': {
-                'dark_mode': self.ui_components.is_dark_mode,
-                'auto_restart': self.auto_restart_enabled,
-                'idle_timeout_minutes': self.idle_timeout_minutes,
-                'minimize_on_start': self.ui_components.minimize_on_start_var.get(),
-                'hotkey_control': self.ui_components.hotkey_control_var.get(),
-                'notifications_enabled': self.ui_components.notifications_enabled.get()
-            }
-        }
+        """Update configuration from UI components safely"""
+        # Mouse
+        self.config['mouse']['enabled'] = self.ui_components.mouse_enabled.get()
+        self.config['mouse']['movements'] = self.ui_components.mouse_movements.get()
+        self.config['mouse']['min_duration'] = self.ui_components.mouse_min_duration.get()
+        self.config['mouse']['max_duration'] = self.ui_components.mouse_max_duration.get()
         
-        self.config = new_config
+        # Keyboard
+        self.config['keyboard']['enabled'] = self.ui_components.keyboard_enabled.get()
+        self.config['keyboard']['actions'] = self.ui_components.keyboard_actions.get()
+        self.config['keyboard']['dart_enabled'] = self.ui_components.dart_enabled.get()
+        
+        # UI/System
+        self.config['ui']['auto_restart'] = self.auto_restart_enabled
+        self.config['ui']['process_cleaner_enabled'] = self.ui_components.process_cleaner_enabled.get()
+        
+        # Schedule
+        self.config['schedule']['enabled'] = self.ui_components.schedule_enabled.get()
+        self.config['schedule']['start_time'] = self.ui_components.schedule_start.get()
+        self.config['schedule']['end_time'] = self.ui_components.schedule_end.get()
+        
         self.save_config()
 
     def apply_changes(self):
@@ -271,18 +253,58 @@ class AndroidStudioUI:
         self.simulation_controls.stop_simulation()
         self.update_status("🔴 Status: Stopped")
 
+    def toggle_pause(self):
+        """Toggle simulation pause state"""
+        self.simulation_controls.handle_user_activity()
+
     def update_status(self, status_text):
-        """Update the status label"""
-        if hasattr(self.ui_components, 'status_label') and self.ui_components.status_label:
-            self.ui_components.status_label.config(text=status_text.replace('Simulation', 'Active').replace('simulation', 'active'))
+        """Update the status label and indicator"""
+        status_colors = {
+            "running": self.ui_components.get_color('success'),
+            "paused": self.ui_components.get_color('warning'),
+            "stopped": self.ui_components.get_color('danger'),
+            "ready": self.ui_components.get_color('success')
+        }
+        
+        status_key = status_text.lower().split(':')[-1].strip()
+        color = status_colors.get(status_key, self.ui_components.get_color('text'))
+        
+        if hasattr(self.ui_components, 'status_indicator') and self.ui_components.status_indicator:
+            self.ui_components.status_indicator.config(text=f"● {status_key.capitalize()}", fg=color)
+            
+        # Update System Tray Icon
+        if hasattr(self, 'system_tray') and self.system_tray:
+            tray_status = status_key if status_key in ["running", "paused", "stopped"] else "stopped"
+            self.system_tray.update_status(tray_status)
 
     def toggle_auto_restart(self):
         """Toggle auto-restart functionality"""
-        self.auto_restart_enabled = self.ui_components.auto_restart_var.get()
-        if 'ui' not in self.config:
-            self.config['ui'] = {}
+        self.auto_restart_enabled = not self.auto_restart_enabled
         self.config['ui']['auto_restart'] = self.auto_restart_enabled
-        self.save_config()
+        self.config_manager.save_config(self.config)
+        self.logger.info(f"Auto-restart {'enabled' if self.auto_restart_enabled else 'disabled'}")
+
+    def exit_application(self):
+        """Exit the application safely and completely"""
+        try:
+            self.logger.info("Initiating shutdown...")
+            
+            # Stop simulation engine if running
+            if hasattr(self, 'simulation_controls') and self.simulation_controls:
+                self.simulation_controls.stop_simulation()
+            
+            # Stop system tray
+            if hasattr(self, 'system_tray') and self.system_tray:
+                self.system_tray.stop()
+                
+            # Destroy UI
+            if hasattr(self, 'root') and self.root:
+                self.root.destroy()
+        except Exception:
+            pass
+        finally:
+            import os
+            os._exit(0) # Hard exit to ensure all threads die
 
     def toggle_hotkey_control(self):
         """Toggle hotkey control"""
@@ -362,19 +384,7 @@ class AndroidStudioUI:
 
     def save_config(self, config=None):
         """Save configuration to file"""
-        if config is None:
-            config = self.config
-        
-        try:
-            # Ensure config directory exists
-            config_dir = os.path.dirname(self.config_file)
-            if not os.path.exists(config_dir):
-                os.makedirs(config_dir)
-            
-            with open(self.config_file, 'w') as f:
-                json.dump(config, f, indent=2)
-        except Exception as e:
-            self.logger.error(f"Failed to save configuration: {e}")
+        self.config_manager.save_config(config or self.config)
 
     def merge_configs(self, default_config, user_config):
         """Merge default and user configurations"""
@@ -472,7 +482,14 @@ class AndroidStudioUI:
                 'minimize_on_start': True,
                 'hotkey_control': True,
                 'notifications_enabled': False,
-                'pause_after_activity': 3
+                'pause_after_activity': 3,
+                'process_cleaner_enabled': False
+            },
+            'schedule': {
+                'enabled': False,
+                'start_time': '09:00',
+                'end_time': '17:00',
+                'days': 'Mon,Tue,Wed,Thu,Fri'
             }
         }
 

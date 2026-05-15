@@ -2,6 +2,8 @@ import threading
 import tkinter as tk
 from tkinter import messagebox
 import logging
+import time
+import sys
 
 try:
     import pystray  # type: ignore
@@ -14,54 +16,59 @@ except ImportError:
 from logic.resources import get_resource_usage
 
 class SystemTray:
-    def __init__(self, app):
+    def __init__(self, app=None):
         self.app = app
         self.icon = None
         self.tray_thread = None
         self.logger = logging.getLogger("android_studio")
         self.current_status = "stopped"  # stopped, running, paused
-        self.tray_enabled = getattr(app, 'tray_enabled', True)  # Default to True
+        self.tray_enabled = True
+        if app and hasattr(app, 'config'):
+            self.tray_enabled = app.config.get('ui', {}).get('tray_enabled', True)
+        
         if self.tray_enabled:
             self.setup_system_tray()
 
     def create_status_icon(self, status):
-        """Create a colored icon based on status"""
+        """Create a premium, modern icon based on status"""
         if not Image or not ImageDraw:
             return None
             
-        # Color mapping
-        colors = {
-            "stopped": (255, 0, 0),    # Red
-            "running": (0, 255, 0),    # Green  
-            "paused": (0, 0, 255)      # Blue
+        # Define high-end color palette (HSL-based for vibrancy)
+        status_colors = {
+            "running": {"primary": (46, 204, 113), "glow": (39, 174, 96)},   # Emerald Green
+            "paused": {"primary": (52, 152, 219), "glow": (41, 128, 185)},    # Peter River Blue
+            "stopped": {"primary": (231, 76, 60), "glow": (192, 57, 43)},    # Alizarin Red
         }
         
-        color = colors.get(status, (128, 128, 128))  # Gray as default
+        config = status_colors.get(status, {"primary": (149, 165, 166), "glow": (127, 140, 141)})
+        primary = config["primary"]
+        glow = config["glow"]
         
-        # Create a 16x16 image with the status color (standard Windows tray icon size)
-        image = Image.new('RGBA', (16, 16), color + (0,))
+        # Create a 64x64 canvas for higher quality drawing (then scale down)
+        size = 64
+        image = Image.new('RGBA', (size, size), (0, 0, 0, 0))
         draw = ImageDraw.Draw(image)
-        # Add a simple status indicator (circle in center)
-        center_x, center_y = 8, 8
-        radius = 5
-        # Draw outer circle
-        draw.ellipse([center_x - radius, center_y - radius, 
-                     center_x + radius, center_y + radius], 
-                    outline=(255, 255, 255, 255), width=2)
-        # Draw inner circle based on status
-        if status == "running":
-            draw.ellipse([center_x - radius + 1, center_y - radius + 1,
-                         center_x + radius - 1, center_y + radius - 1],
-                        fill=(0, 200, 0, 255))
-        elif status == "paused":
-            draw.ellipse([center_x - radius + 1, center_y - radius + 1,
-                         center_x + radius - 1, center_y + radius - 1],
-                        fill=(0, 0, 200, 255))
-        elif status == "stopped":
-            draw.ellipse([center_x - radius + 1, center_y - radius + 1,
-                         center_x + radius - 1, center_y + radius - 1],
-                        fill=(200, 0, 0, 255))
-        return image
+        
+        # Draw a soft outer glow/shadow
+        margin = 4
+        draw.ellipse([margin, margin, size-margin, size-margin], fill=glow + (50,))
+        
+        # Draw the main status orb with a subtle gradient effect
+        margin = 10
+        draw.ellipse([margin, margin, size-margin, size-margin], fill=primary + (255,))
+        
+        # Add a "Glass" highlight (top-left)
+        highlight_margin = 14
+        draw.ellipse([highlight_margin, highlight_margin, size//2 + 5, size//2 + 5], 
+                    fill=(255, 255, 255, 100))
+        
+        # Add a subtle border
+        draw.ellipse([margin, margin, size-margin, size-margin], 
+                    outline=(255, 255, 255, 180), width=3)
+
+        # Scale down to 16x16 (Windows default tray size) for crispness
+        return image.resize((16, 16), Image.Resampling.LANCZOS)
 
     def update_status(self, status):
         """Update the tray icon status and color"""
@@ -101,6 +108,7 @@ class SystemTray:
                 image = self.create_status_icon("stopped")
                 menu = (
                     pystray.MenuItem("Show", self._tray_show_window),
+                    pystray.MenuItem(lambda item: "Resume" if self.current_status == "paused" else "Pause", self._tray_toggle_pause),
                     pystray.MenuItem("Start", self._tray_start_simulation),
                     pystray.MenuItem("Stop", self._tray_stop_simulation),
                     pystray.MenuItem("Exit", self._tray_exit_application)
@@ -121,8 +129,16 @@ class SystemTray:
             self.update_tray_resource_tooltip()
         except Exception:
             pass
-        if hasattr(self, 'app') and hasattr(self.app, 'root'):
+        
+        # Reschedule update
+        if hasattr(self, 'app') and self.app and hasattr(self.app, 'root'):
             self.app.root.after(2000, self._schedule_resource_tooltip_update)
+        else:
+            # For CLI mode, use a timer
+            import threading
+            timer = threading.Timer(2.0, self._schedule_resource_tooltip_update)
+            timer.daemon = True
+            timer.start()
 
     def minimize_to_tray(self):
         if self.icon:
@@ -136,16 +152,34 @@ class SystemTray:
                 self.app.show_window()
 
     def _tray_show_window(self, icon=None, item=None):
-        self.app.root.after(0, self.app.show_window)
+        if self.app and hasattr(self.app, 'root'):
+            self.app.root.after(0, self.app.show_window)
+        else:
+            self.logger.info("Show Window: Not available in CLI mode.")
+
+    def _tray_toggle_pause(self, icon=None, item=None):
+        if self.app:
+            self.app.toggle_pause()
 
     def _tray_start_simulation(self, icon=None, item=None):
-        self.app.root.after(0, self.app.start_simulation)
+        if self.app and hasattr(self.app, 'root'):
+            self.app.root.after(0, self.app.start_simulation)
+        elif self.app:
+            self.app.start_simulation()
 
     def _tray_stop_simulation(self, icon=None, item=None):
-        self.app.root.after(0, self.app.stop_simulation)
+        if self.app and hasattr(self.app, 'root'):
+            self.app.root.after(0, self.app.stop_simulation)
+        elif self.app:
+            self.app.stop_simulation()
 
     def _tray_exit_application(self, icon=None, item=None):
-        self.app.root.after(0, self.app.exit_application)
+        if self.app and hasattr(self.app, 'root'):
+            self.app.root.after(0, self.app.exit_application)
+        else:
+            import os
+            self.logger.info("Exiting application...")
+            os._exit(0)
 
     def stop(self):
         try:

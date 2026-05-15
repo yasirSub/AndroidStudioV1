@@ -1,32 +1,35 @@
 import json
 import os
-from tkinter import messagebox
+import logging
 
 class ConfigManager:
     def __init__(self, config_file=None):
-        # Use per-user config in %APPDATA%/AndroidStudioV1/anoid.json by default
+        self.logger = logging.getLogger("android_studio")
+        # Use local config/anoid.json for consistency in this project
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        config_dir = os.path.join(project_root, 'config')
+        os.makedirs(config_dir, exist_ok=True)
+        
         if config_file is None:
-            appdata = os.environ.get('APPDATA')
-            if appdata:
-                config_dir = os.path.join(appdata, 'AndroidStudioV1')
-                os.makedirs(config_dir, exist_ok=True)
-                config_file = os.path.join(config_dir, 'anoid.json')
-            else:
-                # Fallback to local config directory if APPDATA is not set
-                config_dir = os.path.join(os.getcwd(), 'config')
-                os.makedirs(config_dir, exist_ok=True)
-                config_file = os.path.join(config_dir, 'anoid.json')
+            config_file = os.path.join(config_dir, 'anoid.json')
+            
         self.config_file = config_file
         self.config = self.load_config()
 
     def load_config(self):
         try:
-            with open(self.config_file, 'r') as file:
-                return json.load(file)
+            if os.path.exists(self.config_file):
+                with open(self.config_file, 'r') as file:
+                    return json.load(file)
+            return self.get_default_config()
         except Exception as e:
-            if self._notifications_enabled():
-                messagebox.showerror("Error", f"Failed to load configuration: {e}")
-            return {}
+            self.logger.error(f"Failed to load configuration: {e}")
+            return self.get_default_config()
+
+    def get_config(self):
+        """Always reload config to get latest changes"""
+        self.config = self.load_config()
+        return self.config
 
     def save_config(self, config=None):
         try:
@@ -34,37 +37,17 @@ class ConfigManager:
                 config = self.config
             with open(self.config_file, 'w') as file:
                 json.dump(config, file, indent=2)
-            if self._notifications_enabled():
-                messagebox.showinfo("Success", "Configuration saved successfully.")
         except Exception as e:
-            if self._notifications_enabled():
-                messagebox.showerror("Error", f"Failed to save configuration: {e}")
+            self.logger.error(f"Failed to save configuration: {e}")
 
     def update_config(self, new_config):
         self.config = new_config
         self.save_config()
 
-    def reset_to_defaults(self):
-        import shutil
-        import os
-        default_config_path = os.path.join(os.path.dirname(__file__), 'config', 'default_anoid.json')
-        if not os.path.exists(default_config_path):
-            # Try relative to project root
-            default_config_path = os.path.join(os.getcwd(), 'config', 'default_anoid.json')
-        if os.path.exists(default_config_path):
-            try:
-                shutil.copyfile(default_config_path, self.config_file)
-                self.config = self.load_config()
-                return True, None
-            except Exception as e:
-                return False, str(e)
-        else:
-            return False, 'Default config not found.'
-
-    def _notifications_enabled(self):
-        try:
-            with open(self.config_file, 'r') as file:
-                config = json.load(file)
-                return config.get('ui', {}).get('notifications_enabled', False)
-        except Exception:
-            return True  # Fail open: show notifications if config can't be read
+    def get_default_config(self):
+        """Return a basic default config if none exists"""
+        return {
+            'mouse': {'enabled': True, 'movements': 3, 'min_duration': 0.5, 'max_duration': 2.0, 'min_interval': 1.0, 'max_interval': 5.0},
+            'keyboard': {'enabled': True, 'actions': 2, 'phrases': ['coding...', 'android studio'], 'min_interval': 2.0, 'max_interval': 10.0},
+            'ui': {'tray_enabled': True, 'auto_start_simulation': True, 'notifications_enabled': False}
+        }
