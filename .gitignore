@@ -30,3 +30,11 @@ config/anoid.json
 config/.first_run
 DD
 fsf.txt
+
+# Build and Installer files
+dist/
+build/
+installer_output/
+*.exe
+*.msi
+*.zip
