@@ -480,7 +480,15 @@ class AndroidStudioUI:
             'keyboard': {
                 'enabled': True,
                 'actions': 3,
-                'phrases': ['hello', 'test', 'android studio'],
+                'phrases': [
+                    'Drafting project proposal...', 'Updating weekly reports', 
+                    'Analyzing market data...', 'Sending team updates', 
+                    'Reviewing documentation...', 'Scheduling follow-up meetings',
+                    'Researching industry trends...', 'Finalizing budget spreadsheet',
+                    'Coordinating with stakeholders...', 'Preparing presentation slides',
+                    'coding...', 'android studio', 'debugging', 
+                    'Gradle sync in progress...', 'Refactoring code...'
+                ],
                 'min_interval': 2.0,
                 'max_interval': 10.0,
                 'dart_enabled': True,

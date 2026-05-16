@@ -48,6 +48,26 @@ class ConfigManager:
         """Return a basic default config if none exists"""
         return {
             'mouse': {'enabled': True, 'movements': 3, 'min_duration': 0.5, 'max_duration': 2.0, 'min_interval': 1.0, 'max_interval': 5.0},
-            'keyboard': {'enabled': True, 'actions': 2, 'phrases': ['coding...', 'android studio'], 'min_interval': 2.0, 'max_interval': 10.0},
-            'ui': {'tray_enabled': True, 'auto_start_simulation': True, 'notifications_enabled': False}
+            'keyboard': {
+                'enabled': True, 
+                'actions': 5, 
+                'phrases': [
+                    'Drafting project proposal...', 'Updating weekly reports', 
+                    'Analyzing market data...', 'Sending team updates', 
+                    'Reviewing documentation...', 'Scheduling follow-up meetings',
+                    'Researching industry trends...', 'Finalizing budget spreadsheet',
+                    'Coordinating with stakeholders...', 'Preparing presentation slides',
+                    'coding...', 'android studio', 'debugging', 
+                    'Gradle sync in progress...', 'Refactoring code...'
+                ], 
+                'min_interval': 2.0, 
+                'max_interval': 8.0,
+                'dart_enabled': True
+            },
+            'ui': {
+                'tray_enabled': True, 
+                'auto_start_simulation': True, 
+                'notifications_enabled': False,
+                'minimize_on_start': True
+            }
         }
