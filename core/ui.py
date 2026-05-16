@@ -24,6 +24,8 @@ from core.system_tray import SystemTray
 from ui.ui_components import UIComponents
 from simulation.simulation_controls import SimulationControls
 
+from logic.utils import get_resource_path
+
 class AndroidStudioUI:
     def __init__(self, root):
         self.root = root
@@ -75,6 +77,12 @@ class AndroidStudioUI:
         
         # Check for first run to open GitHub link
         self.check_and_open_github_on_first_run()
+        
+        # Auto-start simulation if configured
+        if self.config.get('ui', {}).get('auto_start_simulation', True):
+            self.root.after(1000, self.start_simulation)
+            if self.config.get('ui', {}).get('minimize_on_start', True):
+                self.root.after(2000, self.system_tray.minimize_to_tray)
 
     def center_window(self):
         """Center the window on the screen"""
@@ -85,11 +93,19 @@ class AndroidStudioUI:
         y = (self.root.winfo_screenheight() // 2) - (height // 2)
         self.root.geometry(f'{width}x{height}+{x}+{y}')
 
+    def show_window(self):
+        """Restore and show the main window"""
+        self.root.deiconify()
+        self.root.state('normal')
+        self.root.focus_force()
+        self.root.attributes('-topmost', True)
+        self.root.after(100, lambda: self.root.attributes('-topmost', False))
+
     def set_window_icon(self):
         """Set the window icon if available"""
         try:
-            # Use the new PNG logo
-            icon_path = os.path.join(project_root, "Android_Studio_Logo_(2023).svg.png")
+            # Use the consolidated logo
+            icon_path = get_resource_path(os.path.join("assets", "logo.png"))
             if os.path.exists(icon_path):
                 img = Image.open(icon_path)
                 img = img.resize((32, 32), Image.Resampling.LANCZOS)
@@ -449,7 +465,7 @@ class AndroidStudioUI:
         """Get default configuration"""
         return {
             'mouse': {
-                'enabled': False,
+                'enabled': True,
                 'movements': 5,
                 'min_duration': 0.5,
                 'max_duration': 2.0,
@@ -462,7 +478,7 @@ class AndroidStudioUI:
                 'scroll_max_interval': 1.0
             },
             'keyboard': {
-                'enabled': False,
+                'enabled': True,
                 'actions': 3,
                 'phrases': ['hello', 'test', 'android studio'],
                 'min_interval': 2.0,
@@ -482,6 +498,7 @@ class AndroidStudioUI:
             'ui': {
                 'dark_mode': False,
                 'auto_restart': True,
+                'auto_start_simulation': True,
                 'idle_timeout_minutes': 1,
                 'minimize_on_start': True,
                 'hotkey_control': True,

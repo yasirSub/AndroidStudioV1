@@ -410,7 +410,10 @@ class SimulationEngine:
                 "class DataModel {\n  final int id;\n  final String name;\n  DataModel({required this.id, required this.name});\n  factory DataModel.fromJson(Map<String, dynamic> json) {\n    return DataModel(\n      id: json['id'] as int,\n      name: json['name'] as String,\n    );\n  }\n}",
                 "class AnimationWidget extends StatefulWidget {\n  @override\n  _AnimationWidgetState createState() => _AnimationWidgetState();\n}\nclass _AnimationWidgetState extends State<AnimationWidget> with SingleTickerProviderStateMixin {\n  late AnimationController _controller;\n  @override\n  void initState() {\n    _controller = AnimationController(duration: const Duration(seconds: 2), vsync: this)..repeat();\n    super.initState();\n  }\n  @override\n  void dispose() {\n    _controller.dispose();\n    super.dispose();\n  }\n}",
                 "Widget _buildDeepNestedUI() {\n  return Container(\n    decoration: BoxDecoration(\n      gradient: LinearGradient(colors: [Colors.blue, Colors.purple]),\n    ),\n    child: Center(\n      child: Card(\n        elevation: 10,\n        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),\n        child: Padding(\n          padding: const EdgeInsets.all(32.0),\n          child: Column(\n            mainAxisSize: MainAxisSize.min,\n            children: [\n              Icon(Icons.rocket_launch, size: 64, color: Colors.blue),\n              SizedBox(height: 16),\n              Text('Advanced UI Architecture', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),\n              Text('Implementing complex design patterns...'),\n            ],\n          ),\n        ),\n      ),\n    ),\n  );\n}",
-                "abstract class BaseRepository<T> {\n  Future<List<T>> getAll();\n  Future<T> getById(String id);\n  Future<void> save(T item);\n}\nclass UserRepository extends BaseRepository<User> {\n  @override\n  Future<List<User>> getAll() async {\n    final db = await DatabaseHelper.instance.database;\n    final maps = await db.query('users');\n    return List.generate(maps.length, (i) => User.fromMap(maps[i]));\n  }\n}"
+                "abstract class BaseRepository<T> {\n  Future<List<T>> getAll();\n  Future<T> getById(String id);\n  Future<void> save(T item);\n}\nclass UserRepository extends BaseRepository<User> {\n  @override\n  Future<List<User>> getAll() async {\n    final db = await DatabaseHelper.instance.database;\n    final maps = await db.query('users');\n    return List.generate(maps.length, (i) => User.fromMap(maps[i]));\n  }\n}",
+                "class Material3Theme {\n  static ThemeData light() => ThemeData(\n    useMaterial3: true,\n    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.light),\n    navigationBarTheme: const NavigationBarThemeData(elevation: 0),\n  );\n}",
+                "Future<void> initializeFirebase() async {\n  await Firebase.initializeApp(\n    options: DefaultFirebaseOptions.currentPlatform,\n  );\n  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);\n}",
+                "class CustomBlocProvider<T extends Bloc> extends InheritedWidget {\n  final T bloc;\n  const CustomBlocProvider({required this.bloc, required Widget child}) : super(child: child);\n  @override\n  bool updateShouldNotify(CustomBlocProvider oldWidget) => bloc != oldWidget.bloc;\n}"
             ]
             for _ in range(actions):
                 if not self.running or self.paused: break
@@ -423,7 +426,15 @@ class SimulationEngine:
                     self.ignoring_activity = False
                 time.sleep(random.uniform(2, 5))
         else:
-            phrases = kb_config.get('phrases', ['coding...', 'android studio', 'debugging'])
+            phrases = kb_config.get('phrases', [
+                'Drafting project proposal...', 'Updating weekly reports', 
+                'Analyzing market data...', 'Sending team updates', 
+                'Reviewing documentation...', 'Scheduling follow-up meetings',
+                'Researching industry trends...', 'Finalizing budget spreadsheet',
+                'Coordinating with stakeholders...', 'Preparing presentation slides',
+                'coding...', 'android studio', 'debugging', 
+                'Gradle sync in progress...', 'Refactoring code...'
+            ])
             for _ in range(actions):
                 if not self.running or self.paused: break
                 phrase = random.choice(phrases)
@@ -498,7 +509,13 @@ class SimulationEngine:
         self._dismiss_notifications()
         if not gw: return
         
-        target_titles = ["Visual Studio Code", "Android Studio", "Cursor", "IntelliJ", "Sublime", "Notepad++", "Notepad", "EditPlus", "UltraEdit", "test", "Antigravity"]
+        target_titles = [
+            "Visual Studio Code", "Android Studio", "Cursor", "IntelliJ", "Sublime", "Notepad++", 
+            "Google Chrome", "Microsoft Edge", "Firefox", "Opera", "Brave",
+            "Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint", "Outlook", 
+            "Microsoft Teams", "Slack", "Discord", "Skype", "Zoom",
+            "Notepad", "Antigravity", "Anoid"
+        ]
         editor_found = False
         
         try:

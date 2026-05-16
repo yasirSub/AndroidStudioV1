@@ -1,16 +1,16 @@
-# Release Notes: AndroidStudioV1 PRO
+# Release Notes: Anoid PRO
 
-## Version: v1.1.0 PRO (Upgrade)
+## Version: v1.0.4+1 PRO
 
 **Release Date:** 2026-05-16
 
 ---
 
-### 🚀 Major Upgrade: V1.1 PRO
-This release transforms the utility into **AndroidStudioV1**, featuring a complete rebranding, enhanced simulation logic, and professional distribution tools.
+### 🚀 Major Upgrade: Anoid PRO
+This release transforms the utility into **Anoid**, featuring a complete rebranding, enhanced simulation logic, and professional distribution tools.
 
 ### ✨ New Features & Improvements:
-- **Official Rebranding**: Fully renamed to **AndroidStudioV1** across the UI, window titles, and system tray.
+- **Official Rebranding**: Fully renamed to **Anoid** across the UI, window titles, and system tray.
 - **New 2023 Visual Identity**: Integrated the official 2023 Android Studio logo into the application dashboard and window icon.
 - **Magic Start Command**: Resume simulation instantly by typing `s` or `start` + `Enter` directly in your editor.
 - **Ultra-Responsive Idle Detection**: Reduced resume threshold to 3 seconds for immediate activity takeover.

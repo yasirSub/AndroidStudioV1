@@ -10,6 +10,7 @@ import os
 import json
 from .ui_styles import UIStyleManager
 from logic.resources import get_resource_usage
+from logic.utils import get_resource_path
 
 class ModernTooltip:
     def __init__(self, widget, text):
@@ -246,7 +247,7 @@ class UIComponents:
         
         # Load and display logo
         try:
-            logo_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Android_Studio_Logo_(2023).svg.png")
+            logo_path = get_resource_path(os.path.join("assets", "logo.png"))
             if os.path.exists(logo_path):
                 img = Image.open(logo_path)
                 img = img.resize((60, 60), Image.Resampling.LANCZOS)
@@ -255,9 +256,9 @@ class UIComponents:
         except Exception as e:
             logging.error(f"Failed to load logo: {e}")
             
-        tk.Label(logo_area, text="AndroidStudioV1", font=("Segoe UI", 14, "bold"), 
+        tk.Label(logo_area, text="Anoid", font=("Segoe UI", 16, "bold"), 
                  fg="#3B82F6", bg="#0F172A").pack()
-        tk.Label(logo_area, text="V1.1 PRO", font=("Segoe UI", 7, "bold"), 
+        tk.Label(logo_area, text="v1.0.4+1 PRO", font=("Segoe UI", 7, "bold"), 
                  fg="#4B5563", bg="#0F172A").pack()
         
         # Nav Buttons

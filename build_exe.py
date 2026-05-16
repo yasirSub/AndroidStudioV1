@@ -16,20 +16,15 @@ def build():
     main_script = "main.py"
     
     # Path to the logo
-    logo_file = "Android_Studio_Logo_(2023).svg.png"
+    logo_dir = "assets"
     
     # Build command
-    # --noconsole: Hide terminal window (since it's a GUI/Tray app)
-    # --onefile: Bundle into a single EXE
-    # --add-data: Include the logo file
-    # --icon: Set the EXE icon (if we had an .ico, but we can use the png for some aspects)
-    # --name: Resulting EXE name
-    
     cmd = [
-        "pyinstaller",
+        sys.executable, "-m", "PyInstaller",
         "--noconsole",
         "--onefile",
-        f"--add-data={logo_file};.",
+        f"--add-data={logo_dir};assets",
+        f"--icon=assets/logo.ico",
         f"--name=AndroidStudioV1",
         "--clean",
         main_script

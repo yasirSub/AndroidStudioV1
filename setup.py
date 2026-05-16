@@ -2,8 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name="AndroidStudioV1",
-    version="1.1.0",
+    version="1.0.4",
     packages=find_packages(),
+    include_package_data=True,
+    package_data={
+        '': ['assets/*.png', 'Android_Studio_Logo_(2023).svg.png'],
+    },
     install_requires=[
         "pyautogui",
         "pynput",
