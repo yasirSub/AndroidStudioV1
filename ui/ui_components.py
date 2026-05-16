@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, colorchooser
+from PIL import Image, ImageTk
 import threading
 from typing import Optional, Callable, Any
 import logging
@@ -240,11 +241,23 @@ class UIComponents:
         self.sidebar.pack_propagate(False)
         
         # Logo
-        logo_area = tk.Frame(self.sidebar, bg="#0F172A", pady=20) # Less padding
+        logo_area = tk.Frame(self.sidebar, bg="#0F172A", pady=25)
         logo_area.pack(fill='x')
-        tk.Label(logo_area, text="Anoid", font=("Segoe UI", 16, "bold"), 
+        
+        # Load and display logo
+        try:
+            logo_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Android_Studio_Logo_(2023).svg.png")
+            if os.path.exists(logo_path):
+                img = Image.open(logo_path)
+                img = img.resize((60, 60), Image.Resampling.LANCZOS)
+                self.logo_img = ImageTk.PhotoImage(img)
+                tk.Label(logo_area, image=self.logo_img, bg="#0F172A").pack(pady=(0, 10))
+        except Exception as e:
+            logging.error(f"Failed to load logo: {e}")
+            
+        tk.Label(logo_area, text="AndroidStudioV1", font=("Segoe UI", 14, "bold"), 
                  fg="#3B82F6", bg="#0F172A").pack()
-        tk.Label(logo_area, text="V1.0 PRO", font=("Segoe UI", 7, "bold"), 
+        tk.Label(logo_area, text="V1.1 PRO", font=("Segoe UI", 7, "bold"), 
                  fg="#4B5563", bg="#0F172A").pack()
         
         # Nav Buttons

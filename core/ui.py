@@ -9,6 +9,7 @@ import threading
 import random
 from tkinter import messagebox
 import keyboard as global_keyboard  # for hotkey  # type: ignore
+from PIL import Image, ImageTk
 
 # Add the project root directory to sys.path to ensure imports work correctly
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -26,7 +27,7 @@ from simulation.simulation_controls import SimulationControls
 class AndroidStudioUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Anoid")
+        self.root.title("AndroidStudioV1")
         self.root.geometry("800x600")
         self.root.minsize(750, 550)
         
@@ -87,16 +88,15 @@ class AndroidStudioUI:
     def set_window_icon(self):
         """Set the window icon if available"""
         try:
-            # Try ICO file first
-            icon_path = os.path.join(project_root, "Android_Studio_icon.ico")
+            # Use the new PNG logo
+            icon_path = os.path.join(project_root, "Android_Studio_Logo_(2023).svg.png")
             if os.path.exists(icon_path):
-                self.root.iconbitmap(icon_path)
-            else:
-                # Fallback to SVG (not supported by Tkinter, so just pass)
-                pass
-        except Exception:
-            # Silently fail if icon setting fails
-            pass
+                img = Image.open(icon_path)
+                img = img.resize((32, 32), Image.Resampling.LANCZOS)
+                self.icon_photo = ImageTk.PhotoImage(img)
+                self.root.iconphoto(True, self.icon_photo)
+        except Exception as e:
+            logging.error(f"Failed to set window icon: {e}")
 
     def migrate_old_files(self):
         """Migrate old configuration and log files to new locations"""

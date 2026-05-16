@@ -1,27 +1,27 @@
-# Release Notes: Anoid PRO
+# Release Notes: AndroidStudioV1 PRO
 
-## Version: v1.0.0 PRO
+## Version: v1.1.0 PRO (Upgrade)
 
-**Release Date:** 2026-05-15
-
----
-
-### 🚀 The Evolution of Desktop Automation
-This is the official PRO release of **Anoid**, a complete modernization of the original automation utility. This version focuses on stealth, visual elegance, and intelligent background behavior.
-
-### ✨ Key Features in this Release:
-- **New PRO Dashboard**: A stunning, high-contrast dark-themed UI built for professional environments.
-- **Stealth Mouse Engine**: Uses Bezier curves for organic, human-like mouse movements that avoid detection.
-- **Smart Typing System**: Variable typing speeds with automated typo correction and built-in support for Dart snippets.
-- **Intelligent Auto-Resume**: Integrated idle detection that automatically pauses when you move your mouse and resumes after 10s of inactivity.
-- **System Optimizer**: Active process cleaner that automatically closes non-essential background distractions.
-- **Portable Performance**: Now compiled as a single-file standalone executable for zero-install deployment.
-
-### 🛠 System Improvements:
-- **Hard-Exit Protocol**: Guaranteed application shutdown via system tray or main window.
-- **Synced Visuals**: System tray icons now live-sync with simulation status (Green/Blue/Red).
-- **Reduced Footprint**: Significant reduction in window size and resource usage.
+**Release Date:** 2026-05-16
 
 ---
 
-_Release prepared and documented for the official Anoid PRO launch._ 
+### 🚀 Major Upgrade: V1.1 PRO
+This release transforms the utility into **AndroidStudioV1**, featuring a complete rebranding, enhanced simulation logic, and professional distribution tools.
+
+### ✨ New Features & Improvements:
+- **Official Rebranding**: Fully renamed to **AndroidStudioV1** across the UI, window titles, and system tray.
+- **New 2023 Visual Identity**: Integrated the official 2023 Android Studio logo into the application dashboard and window icon.
+- **Magic Start Command**: Resume simulation instantly by typing `s` or `start` + `Enter` directly in your editor.
+- **Ultra-Responsive Idle Detection**: Reduced resume threshold to 3 seconds for immediate activity takeover.
+- **Single Instance Takeover**: Intelligent protection that ensures only one copy of AndroidStudioV1 is active at a time, automatically closing old instances.
+- **Enhanced Code Library**: Greatly expanded typing repertoire with complex Flutter/Dart architectures (Animations, Repositories, Models).
+- **Speed-Based Interruption**: Mouse-based pausing now requires intentional "speed" movement, allowing minor nudges without stopping the work.
+
+### 📦 Installation & Setup:
+- **Standalone EXE**: Use `python build_exe.py` to create a single-file executable for Windows.
+- **Standard Install**: Use `pip install .` to install as a global system utility.
+
+---
+
+_V1.1 PRO: Engineered for ultimate developer simulation._

@@ -77,9 +77,9 @@ class SystemTray:
             
         self.current_status = status
         status_text = {
-            "stopped": "Android Studio - Stopped",
-            "running": "Android Studio - Active", 
-            "paused": "Android Studio - Paused"
+            "stopped": "AndroidStudioV1 - Stopped",
+            "running": "AndroidStudioV1 - Active", 
+            "paused": "AndroidStudioV1 - Paused"
         }
         
         try:
@@ -113,7 +113,7 @@ class SystemTray:
                     pystray.MenuItem("Stop", self._tray_stop_simulation),
                     pystray.MenuItem("Exit", self._tray_exit_application)
                 )
-                self.icon = pystray.Icon("AndroidStudio", image, "Android Studio - Stopped", menu)
+                self.icon = pystray.Icon("AndroidStudio", image, "AndroidStudioV1 - Stopped", menu)
                 self.tray_thread = threading.Thread(target=self.icon.run, daemon=True)
                 self.tray_thread.start()
                 self._schedule_resource_tooltip_update()

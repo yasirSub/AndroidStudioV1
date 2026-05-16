@@ -4,6 +4,7 @@ import argparse
 import logging
 import time
 import threading
+import psutil
 from core.engine import SimulationEngine
 from logic.config_manager import ConfigManager
 from core.system_tray import SystemTray
@@ -60,10 +61,35 @@ def main():
     else:
         project_root = os.path.dirname(os.path.abspath(__file__))
     
+    config_manager = ConfigManager()
     config_dir = os.path.join(project_root, "config")
     os.makedirs(config_dir, exist_ok=True)
     
-    config_manager = ConfigManager()
+    # --- SINGLE INSTANCE CHECK (Takeover Mode) ---
+    lock_file = os.path.join(config_dir, "anoid.pid")
+    current_pid = os.getpid()
+    
+    if os.path.exists(lock_file):
+        try:
+            with open(lock_file, "r") as f:
+                old_pid = int(f.read().strip())
+            
+            if psutil.pid_exists(old_pid) and old_pid != current_pid:
+                # User requested: "one will stop and another will run"
+                old_proc = psutil.Process(old_pid)
+                # Check if it's actually our app (simple check)
+                if "python" in old_proc.name().lower() or "androidstudiov1" in old_proc.name().lower():
+                    print(f"Terminating existing instance (PID: {old_pid})...")
+                    old_proc.terminate()
+                    old_proc.wait(timeout=3)
+        except Exception as e:
+            print(f"Single instance check failed: {e}")
+            
+    # Write current PID
+    with open(lock_file, "w") as f:
+        f.write(str(current_pid))
+    # ----------------------------------------------
+
     logger = setup_cli_logging(os.path.join(config_dir, "anoid.log"))
 
     # If neither flag is set, check config or default to GUI

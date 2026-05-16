@@ -3,32 +3,47 @@ import subprocess
 import sys
 
 def build():
-    print("Starting Anoid EXE Build Process...")
+    print("Starting AndroidStudioV1 Build Process (V1.1 PRO)...")
     
-    # 1. Install requirements
-    print("Installing dependencies...")
-    subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
-
-    # 2. Define the command
-    cmd = [
-        sys.executable, "-m", "PyInstaller",
-        "--onefile",
-        "--noconsole",
-        "--clean",
-        "--name=Anoid",
-        "--add-data=config;config",
-        "--add-data=requirements.txt;.",
-        "main.py"
-    ]
-
-    print(f"Running PyInstaller: {' '.join(cmd)}")
-    
+    # Ensure pyinstaller is installed
     try:
-        subprocess.run(cmd, check=True)
-        print("\nBuild Successful!")
-        print(f"Your EXE is located in: {os.path.join(os.getcwd(), 'dist', 'Anoid.exe')}")
+        import PyInstaller
+    except ImportError:
+        print("Installing PyInstaller...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller"])
+
+    # Path to the main script
+    main_script = "main.py"
+    
+    # Path to the logo
+    logo_file = "Android_Studio_Logo_(2023).svg.png"
+    
+    # Build command
+    # --noconsole: Hide terminal window (since it's a GUI/Tray app)
+    # --onefile: Bundle into a single EXE
+    # --add-data: Include the logo file
+    # --icon: Set the EXE icon (if we had an .ico, but we can use the png for some aspects)
+    # --name: Resulting EXE name
+    
+    cmd = [
+        "pyinstaller",
+        "--noconsole",
+        "--onefile",
+        f"--add-data={logo_file};.",
+        f"--name=AndroidStudioV1",
+        "--clean",
+        main_script
+    ]
+    
+    print(f"Executing: {' '.join(cmd)}")
+    try:
+        subprocess.check_call(cmd)
+        print("\n" + "="*40)
+        print("BUILD SUCCESSFUL!")
+        print(f"Your standalone installer is located in: {os.path.join(os.getcwd(), 'dist', 'AndroidStudioV1.exe')}")
+        print("="*40)
     except subprocess.CalledProcessError as e:
-        print(f"\nBuild Failed with error: {e}")
+        print(f"\nBuild failed: {e}")
 
 if __name__ == "__main__":
     build()
