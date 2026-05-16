@@ -61,7 +61,15 @@ config/*.log
 config/*.pid
 test
 anoid.log
-AndroidStudioV1.exe
+test
+
+# Build and Installer folders
 dist/
 build/
+installer_output/
+*.exe
+*.msi
+*.zip
 *.spec
+*.manifest
+
