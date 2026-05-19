@@ -80,8 +80,13 @@ def main():
                 # Check if it's actually our app (simple check)
                 if "python" in old_proc.name().lower() or "androidstudiov1" in old_proc.name().lower():
                     print(f"Terminating existing instance (PID: {old_pid})...")
-                    old_proc.terminate()
-                    old_proc.wait(timeout=3)
+                    try:
+                        old_proc.terminate()
+                        old_proc.wait(timeout=2)
+                    except psutil.TimeoutExpired:
+                        print(f"Force-killing existing instance (PID: {old_pid})...")
+                        old_proc.kill()
+                        old_proc.wait(timeout=2)
         except Exception as e:
             print(f"Single instance check failed: {e}")
             
@@ -90,7 +95,16 @@ def main():
         f.write(str(current_pid))
     # ----------------------------------------------
 
-    logger = setup_cli_logging(os.path.join(config_dir, "anoid.log"))
+    # Auto-clear massive log file (> 1MB) on startup to prevent slowdowns and freezing
+    log_file_path = os.path.join(config_dir, "anoid.log")
+    if os.path.exists(log_file_path) and os.path.getsize(log_file_path) > 1 * 1024 * 1024:
+        try:
+            with open(log_file_path, "w", encoding="utf-8") as f:
+                f.write("")
+        except Exception:
+            pass
+
+    logger = setup_cli_logging(log_file_path)
 
     # If neither flag is set, check config or default to GUI
     # But user specifically asked for terminal mode, so I'll make it smart.

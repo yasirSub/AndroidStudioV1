@@ -1,16 +1,16 @@
 ; Inno Setup Script for AndroidStudioV1 PRO
-; Version: 1.0.4
+; Version: 1.0.5
 
 [Setup]
 AppId={{C6F4F5E1-B5D2-4A2E-9D12-7A9B3E4D5F6B}
 AppName=AndroidStudioV1
-AppVersion=1.0.4
+AppVersion=1.0.5
 AppPublisher=AndroidStudioV1 Team
 DefaultDirName={autopf}\AndroidStudioV1
 DefaultGroupName=AndroidStudioV1
 AllowNoIcons=yes
 OutputDir=.
-OutputBaseFilename=AndroidStudioV1_Setup_v1.0.4
+OutputBaseFilename=AndroidStudioV1_Setup_v1.0.5
 SetupIconFile=assets\logo.ico
 Compression=lzma
 SolidCompression=yes

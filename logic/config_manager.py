@@ -57,7 +57,7 @@ class ConfigManager:
                     'Reviewing documentation...', 'Scheduling follow-up meetings',
                     'Researching industry trends...', 'Finalizing budget spreadsheet',
                     'Coordinating with stakeholders...', 'Preparing presentation slides',
-                    'coding...', 'android studio', 'debugging', 
+                    'Coding...', 'Android Studio...', 'Debugging...', 
                     'Gradle sync in progress...', 'Refactoring code...'
                 ], 
                 'min_interval': 2.0, 

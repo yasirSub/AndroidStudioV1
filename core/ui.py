@@ -75,9 +75,6 @@ class AndroidStudioUI:
         # Set window icon if available
         self.set_window_icon()
         
-        # Check for first run to open GitHub link
-        self.check_and_open_github_on_first_run()
-        
         # Auto-start simulation if configured
         if self.config.get('ui', {}).get('auto_start_simulation', True):
             self.root.after(1000, self.start_simulation)
@@ -137,6 +134,14 @@ class AndroidStudioUI:
             log_dir = os.path.dirname(self.log_file)
             if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
+            
+            # Auto-clear massive log file (> 1MB) on startup to prevent slowdowns and freezing
+            if os.path.exists(self.log_file) and os.path.getsize(self.log_file) > 1 * 1024 * 1024:
+                try:
+                    with open(self.log_file, "w", encoding="utf-8") as f:
+                        f.write("")
+                except Exception:
+                    pass
             
             # Only log to file, not to console
             logging.basicConfig(
@@ -438,29 +443,6 @@ class AndroidStudioUI:
             from tkinter import messagebox
             messagebox.showerror(title, message)
 
-    def open_url(self, url):
-        """Open URL in default browser"""
-        import webbrowser
-        try:
-            webbrowser.open(url)
-        except Exception as e:
-            self.logger.error(f"Failed to open URL {url}: {e}")
-
-    def check_and_open_github_on_first_run(self):
-        """Check if this is the first run and open GitHub if needed"""
-        first_run_file = os.path.join(project_root, "config", ".first_run")
-        if not os.path.exists(first_run_file):
-            try:
-                # Create first run marker
-                os.makedirs(os.path.dirname(first_run_file), exist_ok=True)
-                with open(first_run_file, 'w') as f:
-                    f.write("1")
-                
-                # Open GitHub in browser
-                self.open_url("https://github.com/yasirSub/AndroidStudioV1")
-            except Exception as e:
-                self.logger.error(f"Failed to handle first run: {e}")
-
     def get_default_config(self):
         """Get default configuration"""
         return {
@@ -486,7 +468,7 @@ class AndroidStudioUI:
                     'Reviewing documentation...', 'Scheduling follow-up meetings',
                     'Researching industry trends...', 'Finalizing budget spreadsheet',
                     'Coordinating with stakeholders...', 'Preparing presentation slides',
-                    'coding...', 'android studio', 'debugging', 
+                    'Coding...', 'Android Studio...', 'Debugging...', 
                     'Gradle sync in progress...', 'Refactoring code...'
                 ],
                 'min_interval': 2.0,

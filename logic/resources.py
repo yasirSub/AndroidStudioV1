@@ -12,7 +12,7 @@ def get_resource_usage():
         import psutil
         process = psutil.Process(os.getpid())
         mem_info = process.memory_info()
-        data['cpu_percent'] = process.cpu_percent(interval=0.1)
+        data['cpu_percent'] = process.cpu_percent(interval=None)
         data['ram_mb'] = mem_info.rss / (1024 * 1024)
     except ImportError:
         pass

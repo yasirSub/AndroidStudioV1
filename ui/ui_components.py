@@ -200,8 +200,9 @@ class UIComponents:
         if hasattr(self, 'log_text') and self.log_text:
             try:
                 self.log_text.config(state='normal')
-                if os.path.exists("anoid.log"):
-                    with open("anoid.log", "r") as f:
+                log_path = getattr(self.app, 'log_file', os.path.join("config", "anoid.log"))
+                if os.path.exists(log_path):
+                    with open(log_path, "r", encoding="utf-8", errors="ignore") as f:
                         lines = f.readlines()[-50:] # Last 50 lines
                         self.log_text.delete('1.0', tk.END)
                         self.log_text.insert(tk.END, "".join(lines))
@@ -258,7 +259,7 @@ class UIComponents:
             
         tk.Label(logo_area, text="Anoid", font=("Segoe UI", 16, "bold"), 
                  fg="#3B82F6", bg="#0F172A").pack()
-        tk.Label(logo_area, text="v1.0.4+1 PRO", font=("Segoe UI", 7, "bold"), 
+        tk.Label(logo_area, text="v1.0.5 PRO", font=("Segoe UI", 7, "bold"), 
                  fg="#4B5563", bg="#0F172A").pack()
         
         # Nav Buttons
@@ -390,8 +391,15 @@ class UIComponents:
         self.app.update_log_display()
 
     def clear_log(self):
-        if os.path.exists("anoid.log"):
-            with open("anoid.log", "w") as f: f.write("")
+        log_path = getattr(self.app, 'log_file', os.path.join("config", "anoid.log"))
+        if os.path.exists(log_path):
+            try:
+                with open(log_path, "w", encoding="utf-8") as f:
+                    f.write("")
+            except Exception:
+                pass
+        if hasattr(self.app, 'log_messages'):
+            self.app.log_messages.clear()
         self.app.update_log_display()
 
     def get_color(self, name): return self.colors.get(name, "#000000")

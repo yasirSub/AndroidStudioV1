@@ -356,7 +356,7 @@ class SimulationEngine:
             # Small interval between movements
             time.sleep(random.uniform(mouse_config.get('min_interval', 1.0), mouse_config.get('max_interval', 3.0)))
 
-    def _human_type(self, text, base_interval=0.2):
+    def _human_type(self, text, base_interval=0.3):
         """Types text with random intervals and occasional mistakes. Default slowed down as requested."""
         for char in text:
             if not self.running or self.paused: break
@@ -366,27 +366,30 @@ class SimulationEngine:
                 # Type a random neighboring key (simulated)
                 self.ignoring_activity = True
                 try:
-                    pyautogui.write(random.choice("asdfghjkl"), interval=base_interval)
-                    time.sleep(random.uniform(0.1, 0.3))
+                    pyautogui.write(random.choice("asdfghjkl"))
+                    time.sleep(random.uniform(0.15, 0.35))
                     pyautogui.press('backspace')
-                    time.sleep(random.uniform(0.3, 0.5)) # Increased delay for stability
+                    time.sleep(random.uniform(0.35, 0.55)) # Delay for stability
                 finally:
                     self.ignoring_activity = False
             
             self.ignoring_activity = True
             try:
-                pyautogui.write(char, interval=base_interval * random.uniform(0.5, 1.5))
+                pyautogui.write(char)
+                time.sleep(base_interval * random.uniform(0.8, 1.4))
                 
-                # Slightly longer pause after punctuation
+                # Slightly longer pause after punctuation or spacing for realism
                 if char in ".,!?;":
-                    time.sleep(random.uniform(0.2, 0.5))
+                    time.sleep(random.uniform(0.3, 0.6))
+                elif char in " \t\n":
+                    time.sleep(random.uniform(0.1, 0.25))
             finally:
                 self.ignoring_activity = False
 
     def _simulate_keyboard(self, kb_config):
         dart_enabled = kb_config.get('dart_enabled', False)
-        # Slowed down interval (0.1 for dart, 0.2 for text)
-        base_interval = 0.12 if dart_enabled else 0.25
+        # Slower typing speed (0.22 for dart, 0.45 for normal text) for highly realistic speed
+        base_interval = 0.22 if dart_enabled else 0.45
         
         # Small delay to ensure focus is solid before typing
         time.sleep(0.5)
@@ -432,7 +435,7 @@ class SimulationEngine:
                 'Reviewing documentation...', 'Scheduling follow-up meetings',
                 'Researching industry trends...', 'Finalizing budget spreadsheet',
                 'Coordinating with stakeholders...', 'Preparing presentation slides',
-                'coding...', 'android studio', 'debugging', 
+                'Coding...', 'Android Studio...', 'Debugging...', 
                 'Gradle sync in progress...', 'Refactoring code...'
             ])
             for _ in range(actions):

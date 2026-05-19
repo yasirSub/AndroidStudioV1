@@ -1,6 +1,6 @@
 # Release Notes: Anoid PRO
 
-## Version: v1.0.4+1 PRO
+## Version: v1.0.5 PRO
 
 **Release Date:** 2026-05-16
 

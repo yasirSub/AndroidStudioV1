@@ -130,15 +130,18 @@ class SystemTray:
         except Exception:
             pass
         
-        # Reschedule update
-        if hasattr(self, 'app') and self.app and hasattr(self.app, 'root'):
-            self.app.root.after(2000, self._schedule_resource_tooltip_update)
-        else:
-            # For CLI mode, use a timer
-            import threading
-            timer = threading.Timer(2.0, self._schedule_resource_tooltip_update)
-            timer.daemon = True
-            timer.start()
+        # Reschedule update safely to prevent exceptions during app shutdown
+        try:
+            if hasattr(self, 'app') and self.app and hasattr(self.app, 'root') and self.app.root:
+                self.app.root.after(2000, self._schedule_resource_tooltip_update)
+            else:
+                # For CLI mode, use a timer
+                import threading
+                timer = threading.Timer(2.0, self._schedule_resource_tooltip_update)
+                timer.daemon = True
+                timer.start()
+        except Exception:
+            pass
 
     def minimize_to_tray(self):
         if self.icon:

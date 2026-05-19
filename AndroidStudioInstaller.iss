@@ -1,6 +1,6 @@
 [Setup]
 AppName=Anoid
-AppVersion=1.0.4+1 PRO
+AppVersion=1.0.5 PRO
 DefaultDirName={pf}\Anoid
 DefaultGroupName=Anoid Tools
 OutputDir=installer_output
